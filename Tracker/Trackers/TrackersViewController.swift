@@ -9,6 +9,9 @@ import UIKit
 
 final class TrackersViewController: UIViewController {
     
+    var categories: [TrackerCategory] = []
+    var completedTrackers: [TrackerRecord] = []
+
     @IBOutlet private weak var plusButton: UIButton!
     @IBOutlet private weak var headLabel: UILabel!
     @IBOutlet private weak var stubLabel: UILabel!
@@ -42,10 +45,12 @@ extension TrackersViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(button)
         
-        button.heightAnchor.constraint(equalToConstant: 42).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 42).isActive = true
-        button.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 6).isActive = true
-        button.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 1).isActive = true
+        NSLayoutConstraint.activate([
+            button.heightAnchor.constraint(equalToConstant: 42),
+            button.widthAnchor.constraint(equalToConstant: 42),
+            button.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 6),
+            button.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 1)
+        ])
         
         plusButton = button
     }
@@ -60,8 +65,10 @@ extension TrackersViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(label)
         
-        label.topAnchor.constraint(equalTo: plusButton.bottomAnchor, constant: 1).isActive = true
-        label.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: plusButton.bottomAnchor, constant: 1),
+            label.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16)
+        ])
         
         stubLabel = label
     }
@@ -75,10 +82,12 @@ extension TrackersViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(imageView)
         
-        imageView.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 80).isActive = true
-        imageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            imageView.heightAnchor.constraint(equalToConstant: 80),
+            imageView.widthAnchor.constraint(equalToConstant: 80),
+            imageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
+        ])
         
         stubImageView = imageView
     }
@@ -93,8 +102,10 @@ extension TrackersViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(label)
         
-        label.topAnchor.constraint(equalTo: stubImageView.bottomAnchor, constant: 8).isActive = true
-        label.centerXAnchor.constraint(equalTo: stubImageView.centerXAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: stubImageView.bottomAnchor, constant: 8),
+            label.centerXAnchor.constraint(equalTo: stubImageView.centerXAnchor)
+        ])
         
         stubLabel = label
     }
