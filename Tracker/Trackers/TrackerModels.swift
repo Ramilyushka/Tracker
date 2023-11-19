@@ -26,11 +26,13 @@ struct Schedule {
     let sunday: Bool
 }
 
-struct TrackerCategory{
+//сущность для хранения трекеров по категориям.
+struct TrackerCategory {
     let name: String
     let trackers: [Tracker]
 }
 
+//сущность для хранения записи о том, что некий трекер был выполнен на некоторую дату;
 struct TrackerRecord {
     let id: UInt
     let date: Date

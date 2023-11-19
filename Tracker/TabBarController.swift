@@ -2,7 +2,7 @@
 //  TabBarController.swift
 //  Tracker
 //
-//  Created by Рамиля on 01/11/23.
+//  Created by Ramilia on 01/11/23.
 //
 
 import UIKit
@@ -17,13 +17,16 @@ final class TabBarController: UITabBarController {
     }
     
     private func createTrackersItem() -> UIViewController {
-        let trackersViewController = TrackersViewController()
+        let trackersViewController = UINavigationController(rootViewController: TrackersViewController())
         
         trackersViewController.tabBarItem = UITabBarItem(
             title: "Трекеры",
             image: UIImage(named: "trackers"),
             selectedImage: nil)
         
+//        let navigation = UINavigationController(rootViewController: trackersViewController)
+//        navigation.modalPresentationStyle = .fullScreen
+//        trackersViewController.present(navigation, animated: true)
         return trackersViewController
     }
     
