@@ -17,32 +17,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zaa-78-jWf">
-                                <rect key="frame" x="16" y="100" width="240" height="128"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Бабушка прислала открытку в вотсапе" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eXf-6p-sJW">
-                                        <rect key="frame" x="12" y="75.333333333333343" width="216" height="40.666666666666657"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                                <color key="backgroundColor" systemColor="systemPinkColor"/>
-                                <constraints>
-                                    <constraint firstItem="eXf-6p-sJW" firstAttribute="leading" secondItem="Zaa-78-jWf" secondAttribute="leading" constant="12" id="7Lu-Gq-n0l"/>
-                                    <constraint firstAttribute="trailing" secondItem="eXf-6p-sJW" secondAttribute="trailing" constant="12" id="Yim-ZO-A3j"/>
-                                    <constraint firstAttribute="bottom" secondItem="eXf-6p-sJW" secondAttribute="bottom" constant="12" id="vTK-pI-QqY"/>
-                                </constraints>
-                            </view>
+                            <searchBar contentMode="redraw" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jgA-hQ-8qa">
+                                <rect key="frame" x="0.0" y="83" width="393" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="Y6W-OH-hqX" id="5z7-JF-Crg"/>
+                                </connections>
+                            </searchBar>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="Zaa-78-jWf" secondAttribute="trailing" constant="137" id="SGQ-By-1Hb"/>
-                            <constraint firstItem="Zaa-78-jWf" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="41" id="ggB-GG-dh0"/>
-                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="Zaa-78-jWf" secondAttribute="bottom" constant="590" id="tq3-y5-GGU"/>
-                            <constraint firstItem="Zaa-78-jWf" firstAttribute="leading" secondItem="5EZ-qb-Rvc" secondAttribute="leadingMargin" id="vvC-7q-s7X"/>
-                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -53,9 +38,6 @@
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemPinkColor">
-            <color red="1" green="0.17647058823529413" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

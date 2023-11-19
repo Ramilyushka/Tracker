@@ -32,7 +32,7 @@ class TrackerCategoryViewHeader: UICollectionReusableView {
         
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: topAnchor),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }

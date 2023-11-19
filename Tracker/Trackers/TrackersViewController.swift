@@ -38,12 +38,13 @@ final class TrackersViewController: UIViewController {
     }()
     
     private let params = GeometricParams(cellCount: 2,
-                                 leftInset: 10,
-                                 rightInset: 10,
+                                 leftInset: 16,
+                                 rightInset: 16,
                                  cellSpacing: 10)
     
     @IBOutlet private weak var plusButton: UIButton!
     @IBOutlet private weak var headLabel: UILabel!
+    @IBOutlet private weak var searchBar: UISearchTextField!
     @IBOutlet private weak var stubLabel: UILabel!
     @IBOutlet private weak var stubImageView: UIImageView!
     
@@ -178,6 +179,7 @@ extension TrackersViewController {
         addPlusButton()
         addDatePicker()
         addHeadLabel()
+        addSearchBar()
         addStubImageView()
         addStubLabel()
         addCollectionView()
@@ -198,7 +200,7 @@ extension TrackersViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: headLabel.bottomAnchor),
+            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 7),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
@@ -243,6 +245,23 @@ extension TrackersViewController {
         ])
         
         headLabel = label
+    }
+    
+    private func addSearchBar() {
+        
+        let search = UISearchTextField()
+        search.placeholder = "Поиск"
+        
+        search.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(search)
+        
+        NSLayoutConstraint.activate([
+            search.topAnchor.constraint(equalTo: headLabel.bottomAnchor, constant: 7),
+            search.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            search.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
+        ])
+        
+        searchBar = search
     }
     
     private func addStubImageView() {
