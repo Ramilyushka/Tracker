@@ -9,7 +9,7 @@ import UIKit
 
 //сущность для хранения информации про трекер (для «Привычки» или «Нерегулярного события»)
 struct Tracker {
-    let id: UInt
+    let id: UUID
     let name: String
     let color: UIColor
     let emoji: String
@@ -71,7 +71,7 @@ struct TrackerCategory {
 
 //сущность для хранения записи о том, что некий трекер был выполнен на некоторую дату;
 struct TrackerRecord {
-    let id: UInt
+    let id: UUID
     let date: Date
 }
 
