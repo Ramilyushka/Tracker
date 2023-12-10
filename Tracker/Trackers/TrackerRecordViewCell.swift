@@ -57,7 +57,7 @@ final class TrackerRecordViewCell: UICollectionViewCell {
             daysLabel.text = completedDays.description + " дней"
     }
     
-    @IBAction private func didTapPlusButton() 
+    @IBAction private func didTapPlusButton() {
         guard
             let id = trackerID,
             let index = indexPath
