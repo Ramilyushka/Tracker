@@ -1,3 +1,4 @@
+
 //
 //  TrackerRecordCellView.swift
 //  Tracker
@@ -7,9 +8,18 @@
 
 import UIKit
 
+protocol TrackerCellDelegate: AnyObject {
+    func completeTracker(id: UUID, at indexPath: IndexPath)
+    func incompleteTracker(id: UUID, at indexPath: IndexPath)
+}
+
 final class TrackerRecordViewCell: UICollectionViewCell {
     
     static let reuseIdentifier = "cell"
+    weak var delegate: TrackerCellDelegate?
+    private var isCompleted = false
+    private var trackerID: UUID?
+    private var indexPath: IndexPath?
     
     private var subView = UIView()
     private let nameTrackerLabel = UILabel()
@@ -19,11 +29,8 @@ final class TrackerRecordViewCell: UICollectionViewCell {
     private let plusImage = UIImage(systemName: "plus") ?? UIImage()
     private let doneImage = UIImage(named: "done_tracker") ?? UIImage()
     
-    var isCompleted = false
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         setupViewCell()
     }
     
@@ -31,18 +38,39 @@ final class TrackerRecordViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setTrackerData(tracker: Tracker, isCompleted: Bool) {
+    func setTrackerData(
+        tracker: Tracker,
+        isCompleted: Bool,
+        completedDays: Int,
+        indexPath: IndexPath) {
+        trackerID = tracker.id
+        self.indexPath = indexPath
+        
         subView.backgroundColor = tracker.color
-        addButton.backgroundColor = tracker.color
         nameTrackerLabel.text = tracker.name
         emojiLabel.text = tracker.emoji
-        daysLabel.text = "1 day"
+        
         self.isCompleted = isCompleted
+        addButton.backgroundColor = tracker.color
+        addButton.setImage(isCompleted ? doneImage: plusImage, for: .normal)
+        
+            daysLabel.text = completedDays.description + " дней"
     }
     
     @IBAction private func didTapPlusButton() {
-        isCompleted.toggle()
-        addButton.setImage(isCompleted ? doneImage: plusImage, for: .normal)
+        guard
+            let id = trackerID,
+            let index = indexPath
+        else {
+            assertionFailure("not found tracker ID or indexPath")
+            return
+        }
+        if isCompleted {
+            delegate?.incompleteTracker(id: id, at: index)
+          }
+        else {
+            delegate?.completeTracker(id: id, at: index)
+        }
     }
 }
 
