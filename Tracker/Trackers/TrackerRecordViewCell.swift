@@ -57,6 +57,7 @@ final class TrackerRecordViewCell: UICollectionViewCell {
     }
     
     @IBAction private func didTapPlusButton() {
+        
         guard 
             let id = trackerID,
             let index = indexPath

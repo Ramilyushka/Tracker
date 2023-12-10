@@ -133,6 +133,7 @@ final class TrackersViewController: UIViewController {
         
         categories = [category1, category2, category3]
         
+        
         visibleCategories = categories
         
         completedTrackers = [
