@@ -43,7 +43,9 @@ final class TrackersViewController: UIViewController {
     }
     
     @IBAction private func didTapPlusButton() {
-        
+        let addTrackerVC = AddTrackerViewController()
+        //addTrackerVC.trackersViewController = self
+        present(addTrackerVC, animated: true)
     }
     
     @IBAction  private func datePickerValueChanged() {

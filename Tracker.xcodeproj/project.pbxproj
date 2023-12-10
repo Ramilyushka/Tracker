@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A80D0CCB2B264E9300C44AF0 /* AddTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D0CCA2B264E9300C44AF0 /* AddTrackerViewController.swift */; };
 		A8AC66962AF2A8E900AA5C7E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8AC66952AF2A8E900AA5C7E /* AppDelegate.swift */; };
 		A8AC66982AF2A8E900AA5C7E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8AC66972AF2A8E900AA5C7E /* SceneDelegate.swift */; };
 		A8AC669F2AF2A8EA00AA5C7E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A8AC669E2AF2A8EA00AA5C7E /* Assets.xcassets */; };
@@ -26,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A80D0CCA2B264E9300C44AF0 /* AddTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTrackerViewController.swift; sourceTree = "<group>"; };
 		A8AC66922AF2A8E900AA5C7E /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8AC66952AF2A8E900AA5C7E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A8AC66972AF2A8E900AA5C7E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 		A8AC67362B123B1B00AA5C7E /* CreateTracker */ = {
 			isa = PBXGroup;
 			children = (
+				A80D0CCA2B264E9300C44AF0 /* AddTrackerViewController.swift */,
 			);
 			path = CreateTracker;
 			sourceTree = "<group>";
@@ -227,6 +230,7 @@
 				A8AC67272B00F25A00AA5C7E /* TrackerRecordViewCell.swift in Sources */,
 				A8AC66AF2AF2B7CA00AA5C7E /* StatisticsViewController.swift in Sources */,
 				A8AC67292B00F3E300AA5C7E /* TrackerCategoryViewHeader.swift in Sources */,
+				A80D0CCB2B264E9300C44AF0 /* AddTrackerViewController.swift in Sources */,
 				A8AC66962AF2A8E900AA5C7E /* AppDelegate.swift in Sources */,
 				A8AC66982AF2A8E900AA5C7E /* SceneDelegate.swift in Sources */,
 			);
