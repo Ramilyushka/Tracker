@@ -7,29 +7,13 @@
 
 import UIKit
 
-struct GeometricParams {
-    let cellCount: Int
-    let leftInset: CGFloat
-    let rightInset: CGFloat
-    let cellSpacing: CGFloat
-    // Параметр вычисляется уже при создании, что экономит время на вычислениях при отрисовке коллекции.
-    let paddingWidth: CGFloat
-    
-    init(cellCount: Int, leftInset: CGFloat, rightInset: CGFloat, cellSpacing: CGFloat) {
-        self.cellCount = cellCount
-        self.leftInset = leftInset
-        self.rightInset = rightInset
-        self.cellSpacing = cellSpacing
-        self.paddingWidth = leftInset + rightInset + CGFloat(cellCount - 1) * cellSpacing
-    }
-}
-
 final class TrackersViewController: UIViewController {
     
     var categories: [TrackerCategory] = []
+    var visibleCategories: [TrackerCategory] = []
     var trackers: [Tracker] = []
     var completedTrackers: [TrackerRecord] = []
-    var selectedDate = Date()
+    var selectedDate: Int?
     
     var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -37,43 +21,98 @@ final class TrackersViewController: UIViewController {
         return collectionView
     }()
     
-    private let params = GeometricParams(cellCount: 2,
-                                 leftInset: 16,
-                                 rightInset: 16,
-                                 cellSpacing: 10)
-    
     @IBOutlet private weak var plusButton: UIButton!
     @IBOutlet private weak var headLabel: UILabel!
+    @IBOutlet private weak var datePicker: UIDatePicker!
     @IBOutlet private weak var searchBar: UISearchTextField!
     @IBOutlet private weak var stubLabel: UILabel!
     @IBOutlet private weak var stubImageView: UIImageView!
+    
+    private let params = GeometricParams(cellCount: 2,
+                                         leftInset: 16,
+                                         rightInset: 16,
+                                         cellSpacing: 10)
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         addViews()
         mockData()
+        filteredTrackers(date: Date())
     }
     
     @IBAction private func didTapPlusButton() {
         
     }
     
-    @IBAction  private func datePickerValueChanged(_ sender: UIDatePicker) {
-        selectedDate = sender.date
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "dd.MM.yyyy" // Формат даты
-//        let formattedDate = dateFormatter.string(from: selectedDate)
-        //print("Выбранная дата: \(formattedDate)")
+    @IBAction  private func datePickerValueChanged() {
+        filteredTrackers(date: datePicker.date)
+        dismiss(animated: true)
+    }
+    
+    private func filteredTrackers(date: Date) {
+        let calendar = Calendar.current
+        let filterWeekDay = calendar.component(.weekday, from: date)
+        
+        visibleCategories = categories.compactMap { category in
+            let trackers = category.trackers.filter { tracker in
+                tracker.schedule?.contains { weekday in
+                    weekday.intValue == filterWeekDay
+                } == true
+            }
+            
+            if trackers.isEmpty {
+                return nil
+            }
+            
+            return TrackerCategory(name: category.name, trackers: trackers)
+        }
+        
+        collectionView.reloadData()
+        showStubZeroTrackers()
+    }
+    
+    private func reloadData() {
+        visibleCategories = categories
+        collectionView.reloadData()
     }
     
     private func mockData(){
-        let shedule = Schedule(monday: true, tuesday: false, wednesday: true, thursday: true, friday: false, saturday: false, sunday: false)
-        let tracker1 = Tracker(id: 1, name: "Поливать растения", color: .green, emoji: "🌸", schedule: shedule)
-        let tracker2 = Tracker(id: 2, name: "Кошка заслонила камеру на созвоне", color: .orange, emoji: "😻", schedule: shedule)
-        let tracker3 = Tracker(id: 3, name: "Бабушка прислала открытку в вотсапе", color: .red, emoji: "🌸", schedule: shedule)
-        let tracker4 = Tracker(id: 4, name: "Свидания в апреле", color: .systemBlue, emoji: "❤️", schedule: shedule)
-        let tracker5 = Tracker(id: 5, name: "Хорошее настроение", color: .purple, emoji: "🙂", schedule: shedule)
-        let tracker6 = Tracker(id: 6, name: "Легкая тревожность", color: .blue, emoji: "😪", schedule: shedule)
+        
+        let tracker1 = Tracker(
+            id: 1,
+            name: "Поливать растения",
+            color: .green,
+            emoji: "🌸",
+            schedule: [Schedule.monday, Schedule.wednesday, Schedule.friday])
+        
+        let tracker2 = Tracker(
+            id: 2,
+            name: "Кошка заслонила камеру на созвоне",
+            color: .orange,
+            emoji: "😻",
+            schedule: [Schedule.monday, Schedule.tuesday, Schedule.wednesday, Schedule.thursday, Schedule.friday])
+        
+        let tracker3 = Tracker(
+            id: 3,
+            name: "Бабушка прислала открытку в вотсапе",
+            color: .red,
+            emoji: "🌸",
+            schedule: [Schedule.friday, Schedule.saturday])
+        
+        let tracker4 = Tracker(
+            id: 4,
+            name: "Свидания в апреле",
+            color: .systemBlue,
+            emoji: "❤️",
+            schedule: [Schedule.monday])
+        
+        let tracker5 = Tracker(id: 5, name: "Хорошее настроение", color: .purple, emoji: "🙂", schedule: [
+            Schedule.monday, Schedule.tuesday, Schedule.wednesday, Schedule.thursday, Schedule.friday
+        ])
+        let tracker6 = Tracker(id: 6, name: "Легкая тревожность", color: .blue, emoji: "😪", schedule: [
+            Schedule.tuesday, Schedule.wednesday, Schedule.thursday, Schedule.friday
+        ])
         
         trackers = [tracker1, tracker2, tracker3, tracker4, tracker5, tracker6]
         
@@ -82,17 +121,28 @@ final class TrackersViewController: UIViewController {
         let category3 = TrackerCategory(name: "Самочувствие", trackers: [tracker5, tracker6])
         
         categories = [category1, category2, category3]
+        
+        visibleCategories = categories
+        
+        completedTrackers = [
+            TrackerRecord(id: tracker1.id, date: Date()),
+            TrackerRecord(id: tracker2.id, date: Date()),
+            TrackerRecord(id: tracker3.id, date: Date()),
+            TrackerRecord(id: tracker4.id, date: Date()),
+            TrackerRecord(id: tracker5.id, date: Date()),
+            TrackerRecord(id: tracker6.id, date: Date())
+        ]
     }
 }
 
 extension TrackersViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return categories.count
+        return visibleCategories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return categories[section].trackers.count
+        return visibleCategories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -104,8 +154,8 @@ extension TrackersViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        let tracker = categories[indexPath.section].trackers[indexPath.row]
-        cell.setTrackerData(tracker: tracker)
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        cell.setTrackerData(tracker: tracker, isCompleted: false)
         
         return cell
     }
@@ -121,7 +171,9 @@ extension TrackersViewController: UICollectionViewDataSource {
         else {
             return UICollectionReusableView()
         }
-        header.titleLabel.text = categories[indexPath.section].name
+        if visibleCategories[indexPath.section].trackers.count != 0 {
+            header.titleLabel.text = visibleCategories[indexPath.section].name
+        }
         return header
     }
 }
@@ -134,7 +186,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         let availableWidth = collectionView.frame.width - params.paddingWidth
         let cellWidth =  availableWidth / CGFloat(params.cellCount)
         return CGSize(width: cellWidth,
-                      height: cellWidth * 5 / 4)
+                      height: 148)
     }
     
     //вертикальные отступы между ячейками внутри коллекции.
@@ -157,18 +209,6 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
-        
-//        let indexPath = IndexPath(row: 0, section: section)
-//        let headerView = self.collectionView(
-//            collectionView,
-//            viewForSupplementaryElementOfKind:UICollectionView.elementKindSectionHeader,
-//            at: indexPath)
-        
-//        return headerView.systemLayoutSizeFitting(
-//            CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height),
-//            withHorizontalFittingPriority: .required,
-//            verticalFittingPriority: .fittingSizeLevel)
-        
         return CGSize(width: collectionView.frame.width, height: 20)
     }
 }
@@ -224,16 +264,20 @@ extension TrackersViewController {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
-        datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.calendar.firstWeekday = 2
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+        
+        self.datePicker = datePicker
     }
     
     private func addHeadLabel() {
         
         let label = UILabel()
         label.text = "Трекеры"
-        label.font = UIFont.boldSystemFont(ofSize: 34)
+        label.font = UIFont(name: ypFontBold, size: 34)
         label.textColor = .black
         
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -251,6 +295,7 @@ extension TrackersViewController {
         
         let search = UISearchTextField()
         search.placeholder = "Поиск"
+        search.backgroundColor = .ypLightGray
         
         search.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(search)
@@ -266,7 +311,7 @@ extension TrackersViewController {
     
     private func addStubImageView() {
         
-        let image = UIImage(named: "stub_trackers") ?? UIImage()
+        let image = UIImage(named: "stub_zero_trackers") ?? UIImage()
         
         let imageView = UIImageView(image: image)
         
@@ -286,8 +331,8 @@ extension TrackersViewController {
     private func addStubLabel() {
         
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.text = "Добавьте первый трекер"
+        label.font = UIFont(name: ypFontMedium, size: 12)
         label.textColor = .black
         
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -299,5 +344,17 @@ extension TrackersViewController {
         ])
         
         stubLabel = label
+    }
+    
+    private func showStubZeroTrackers() {
+        if visibleCategories.isEmpty {
+            collectionView.isHidden = true
+            stubImageView.isHidden = false
+            stubLabel.isHidden = false
+        } else {
+            collectionView.isHidden = false
+            stubImageView.isHidden = true
+            stubLabel.isHidden = true
+        }
     }
 }

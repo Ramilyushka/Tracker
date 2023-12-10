@@ -8,14 +8,18 @@
 import UIKit
 
 final class TrackerRecordViewCell: UICollectionViewCell {
+    
     static let reuseIdentifier = "cell"
     
-    var subView = UIView()
-    let nameTrackerLabel = UILabel()
-    let emojiImageView = UILabel()
-    let daysLabel = UILabel()
-    var addButton = UIButton()
-    var isDone = false
+    private var subView = UIView()
+    private let nameTrackerLabel = UILabel()
+    private let emojiLabel = UILabel()
+    private var daysLabel = UILabel()
+    private var addButton = UIButton()
+    private let plusImage = UIImage(systemName: "plus") ?? UIImage()
+    private let doneImage = UIImage(named: "done_tracker") ?? UIImage()
+    
+    var isCompleted = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,17 +31,18 @@ final class TrackerRecordViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setTrackerData(tracker: Tracker) {
+    func setTrackerData(tracker: Tracker, isCompleted: Bool) {
         subView.backgroundColor = tracker.color
         addButton.backgroundColor = tracker.color
         nameTrackerLabel.text = tracker.name
-        emojiImageView.text = tracker.emoji
+        emojiLabel.text = tracker.emoji
         daysLabel.text = "1 day"
+        self.isCompleted = isCompleted
     }
     
     @IBAction private func didTapPlusButton() {
-        isDone.toggle()
-        addButton.setImage(UIImage(named: isDone ? "done_tracker" : "add_tracker"), for: .normal)
+        isCompleted.toggle()
+        addButton.setImage(isCompleted ? doneImage: plusImage, for: .normal)
     }
 }
 
@@ -53,7 +58,7 @@ extension TrackerRecordViewCell {
     
     private func setupDaysLabel() {
         
-        daysLabel.font =  UIFont.systemFont(ofSize: 12, weight: .medium)
+        daysLabel.font = UIFont(name: ypFontMedium, size: 12)
         
         contentView.addSubview(daysLabel)
         daysLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -68,8 +73,9 @@ extension TrackerRecordViewCell {
     private func setupAddButton() {
         addButton = UIButton(type: .custom)
         addButton.addTarget(self, action: #selector(didTapPlusButton), for: .touchUpInside)
-        addButton.setImage( UIImage(named: "add_tracker") ?? UIImage(), for: .normal)
-        addButton.backgroundColor = .black
+        addButton.setImage(plusImage, for: .normal)
+        addButton.backgroundColor = .ypBlack1
+        addButton.tintColor = .ypWhite1
         
         addButton.layer.cornerRadius = 17
         addButton.layer.masksToBounds = true
@@ -95,10 +101,10 @@ extension TrackerRecordViewCell {
         subView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            subView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-            subView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0),
-            subView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0),
-            subView.heightAnchor.constraint(equalToConstant: 90)
+            subView.heightAnchor.constraint(equalToConstant: 90),
+            subView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            subView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            subView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
     }
     
@@ -107,7 +113,7 @@ extension TrackerRecordViewCell {
         nameTrackerLabel.lineBreakMode = .byWordWrapping
         nameTrackerLabel.numberOfLines = 0
         nameTrackerLabel.textColor = .white
-        nameTrackerLabel.font =  UIFont.systemFont(ofSize: 12, weight: .medium)
+        nameTrackerLabel.font =  UIFont(name: ypFontMedium, size: 12)
         
         subView.addSubview(nameTrackerLabel)
         nameTrackerLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -120,14 +126,18 @@ extension TrackerRecordViewCell {
     }
     
     private func setupEmojiImageView() {
-        subView.addSubview(emojiImageView)
-        emojiImageView.translatesAutoresizingMaskIntoConstraints = false
+        emojiLabel.clipsToBounds = true
+        emojiLabel.layer.cornerRadius = 26/2
+        emojiLabel.backgroundColor = .ypLightGray
+        emojiLabel.textAlignment = .center
+        subView.addSubview(emojiLabel)
+        emojiLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            emojiImageView.topAnchor.constraint(equalTo: subView.topAnchor, constant: 12),
-            emojiImageView.leadingAnchor.constraint(equalTo: subView.leadingAnchor, constant: 12),
-            emojiImageView.heightAnchor.constraint(equalToConstant: 24),
-            emojiImageView.widthAnchor.constraint(equalToConstant: 24)
+            emojiLabel.topAnchor.constraint(equalTo: subView.topAnchor, constant: 12),
+            emojiLabel.leadingAnchor.constraint(equalTo: subView.leadingAnchor, constant: 12),
+            emojiLabel.heightAnchor.constraint(equalToConstant: 26),
+            emojiLabel.widthAnchor.constraint(equalToConstant: 26)
         ])
     }
 }

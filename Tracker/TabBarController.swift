@@ -24,9 +24,6 @@ final class TabBarController: UITabBarController {
             image: UIImage(named: "trackers"),
             selectedImage: nil)
         
-//        let navigation = UINavigationController(rootViewController: trackersViewController)
-//        navigation.modalPresentationStyle = .fullScreen
-//        trackersViewController.present(navigation, animated: true)
         return trackersViewController
     }
     

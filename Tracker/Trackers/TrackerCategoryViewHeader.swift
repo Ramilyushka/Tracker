@@ -25,7 +25,7 @@ class TrackerCategoryViewHeader: UICollectionReusableView {
     
     private func setupTitleLabel(){
         
-        titleLabel.font =  UIFont.systemFont(ofSize: 19, weight: .bold)
+        titleLabel.font = UIFont(name: ypFontBold, size: 19)
         
         addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
