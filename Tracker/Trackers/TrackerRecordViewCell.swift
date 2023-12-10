@@ -36,7 +36,7 @@ final class TrackerRecordViewCell: UICollectionViewCell {
         addButton.backgroundColor = tracker.color
         nameTrackerLabel.text = tracker.name
         emojiLabel.text = tracker.emoji
-        daysLabel.text = "1 day"
+        daysLabel.text = "0 day"
         self.isCompleted = isCompleted
     }
     

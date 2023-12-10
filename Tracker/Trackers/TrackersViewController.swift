@@ -9,11 +9,17 @@ import UIKit
 
 final class TrackersViewController: UIViewController {
     
-    var categories: [TrackerCategory] = []
-    var visibleCategories: [TrackerCategory] = []
-    var trackers: [Tracker] = []
-    var completedTrackers: [TrackerRecord] = []
-    var selectedDate: Int?
+    private var categories: [TrackerCategory] = []
+    private var visibleCategories: [TrackerCategory] = []
+    private var trackers: [Tracker] = []
+    private var completedTrackers: [TrackerRecord] = []
+    
+    private var selectedDate: Int?
+    
+    private let params = GeometricParams(cellCount: 2,
+                                         leftInset: 16,
+                                         rightInset: 16,
+                                         cellSpacing: 10)
     
     var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -24,21 +30,16 @@ final class TrackersViewController: UIViewController {
     @IBOutlet private weak var plusButton: UIButton!
     @IBOutlet private weak var headLabel: UILabel!
     @IBOutlet private weak var datePicker: UIDatePicker!
-    @IBOutlet private weak var searchBar: UISearchTextField!
+    @IBOutlet private weak var searchTextField: UISearchTextField!
     @IBOutlet private weak var stubLabel: UILabel!
     @IBOutlet private weak var stubImageView: UIImageView!
-    
-    private let params = GeometricParams(cellCount: 2,
-                                         leftInset: 16,
-                                         rightInset: 16,
-                                         cellSpacing: 10)
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         addViews()
         mockData()
-        filteredTrackers(date: Date())
+        filteredTrackers(date: Date(), text: "")
     }
     
     @IBAction private func didTapPlusButton() {
@@ -46,19 +47,22 @@ final class TrackersViewController: UIViewController {
     }
     
     @IBAction  private func datePickerValueChanged() {
-        filteredTrackers(date: datePicker.date)
+        filteredTrackers(date: datePicker.date, text: searchTextField.text)
         dismiss(animated: true)
     }
     
-    private func filteredTrackers(date: Date) {
+    private func filteredTrackers(date: Date, text: String?) {
         let calendar = Calendar.current
         let filterWeekDay = calendar.component(.weekday, from: date)
+        let filterText = (text ?? "").lowercased()
         
         visibleCategories = categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
-                tracker.schedule?.contains { weekday in
+                let textCondition = filterText.isEmpty || tracker.name.lowercased().contains(filterText)
+                let dateCondition =  tracker.schedule?.contains { weekday in
                     weekday.intValue == filterWeekDay
                 } == true
+                return textCondition && dateCondition
             }
             
             if trackers.isEmpty {
@@ -132,6 +136,17 @@ final class TrackersViewController: UIViewController {
             TrackerRecord(id: tracker5.id, date: Date()),
             TrackerRecord(id: tracker6.id, date: Date())
         ]
+    }
+}
+
+extension TrackersViewController: UITextFieldDelegate {
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        filteredTrackers(date: datePicker.date, text: searchTextField.text)
+    }
+    
+    func textFieldShouldReturn(_textField: UITextField) -> Bool {
+        return true
     }
 }
 
@@ -219,7 +234,8 @@ extension TrackersViewController {
         addPlusButton()
         addDatePicker()
         addHeadLabel()
-        addSearchBar()
+        addSearchTextField()
+        searchTextField.delegate = self
         addStubImageView()
         addStubLabel()
         addCollectionView()
@@ -240,7 +256,7 @@ extension TrackersViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 7),
+            collectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 7),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
@@ -291,11 +307,12 @@ extension TrackersViewController {
         headLabel = label
     }
     
-    private func addSearchBar() {
+    private func addSearchTextField() {
         
         let search = UISearchTextField()
         search.placeholder = "Поиск"
         search.backgroundColor = .ypLightGray
+        search.returnKeyType = .done
         
         search.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(search)
@@ -306,7 +323,7 @@ extension TrackersViewController {
             search.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
         ])
         
-        searchBar = search
+        searchTextField = search
     }
     
     private func addStubImageView() {
@@ -348,9 +365,14 @@ extension TrackersViewController {
     
     private func showStubZeroTrackers() {
         if visibleCategories.isEmpty {
+            let isZeroTrackers = categories.isEmpty
             collectionView.isHidden = true
             stubImageView.isHidden = false
+            stubImageView.image = UIImage(
+                named: isZeroTrackers ? "stub_zero_trackers" : "stub_not_found_trackers") ?? UIImage()
+            
             stubLabel.isHidden = false
+            stubLabel.text = isZeroTrackers ? "Добавьте первый трекер" : "Ничего не найдено"
         } else {
             collectionView.isHidden = false
             stubImageView.isHidden = true
