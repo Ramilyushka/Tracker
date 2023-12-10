@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  Tracker
 //
-//  Created by Рамиля on 01/11/23.
+//  Created by Ramilia on 01/11/23.
 //
 
 import UIKit
