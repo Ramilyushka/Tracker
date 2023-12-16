@@ -2,7 +2,7 @@
 //  AddTrackerViewController.swift
 //  Tracker
 //
-//  Created by Наиль on 11/12/23.
+//  Created by Ramilia on 11/12/23.
 //
 
 import UIKit
@@ -19,7 +19,9 @@ final class AddTrackerViewController: UIViewController {
     }
     
     @IBAction private func didTapHabitButton() {
-        
+        let addHabitTrackerVC = AddHabitTrackerViewController()
+        //addTrackerVC.trackersViewController = self
+        present(addHabitTrackerVC, animated: true)
     }
     
     @IBAction private func didTapIrregularButton() {

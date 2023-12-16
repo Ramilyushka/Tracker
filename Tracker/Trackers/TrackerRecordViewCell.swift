@@ -31,7 +31,7 @@ final class TrackerRecordViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupViewCell()
+        addViewCell()
     }
     
     required init?(coder: NSCoder) {
@@ -40,21 +40,29 @@ final class TrackerRecordViewCell: UICollectionViewCell {
     
     func setTrackerData(
         tracker: Tracker,
+        selectedDate: Date,
         isCompleted: Bool,
         completedDays: Int,
-        indexPath: IndexPath) {
+        indexPath: IndexPath)
+    {
         trackerID = tracker.id
         self.indexPath = indexPath
         
         subView.backgroundColor = tracker.color
-        nameTrackerLabel.text = tracker.name
+        nameTrackerLabel.text = tracker.title
         emojiLabel.text = tracker.emoji
         
         self.isCompleted = isCompleted
         addButton.backgroundColor = tracker.color
-        addButton.setImage(isCompleted ? doneImage: plusImage, for: .normal)
+        if selectedDate > Date() {
+            addButton.isEnabled = false
+            addButton.setImage(plusImage, for: .normal)
+        } else {
+            addButton.isEnabled = true
+            addButton.setImage(isCompleted ? doneImage: plusImage, for: .normal)
+        }
         
-            daysLabel.text = completedDays.description + " дней"
+        daysLabel.text = completedDays.description + " дней"
     }
     
     @IBAction private func didTapPlusButton() {
@@ -76,15 +84,15 @@ final class TrackerRecordViewCell: UICollectionViewCell {
 
 extension TrackerRecordViewCell {
     
-    private func setupViewCell() {
-        setupSubView()
-        setupEmojiImageView()
-        setupNameTrackerLabel()
-        setupDaysLabel()
-        setupAddButton()
+    private func addViewCell() {
+        addSubView()
+        addEmojiImageView()
+        addNameTrackerLabel()
+        addDaysLabel()
+        addAddButton()
     }
     
-    private func setupDaysLabel() {
+    private func addDaysLabel() {
         
         daysLabel.font = UIFont(name: ypFontMedium, size: 12)
         
@@ -98,7 +106,7 @@ extension TrackerRecordViewCell {
         ])
     }
     
-    private func setupAddButton() {
+    private func addAddButton() {
         addButton = UIButton(type: .custom)
         addButton.addTarget(self, action: #selector(didTapPlusButton), for: .touchUpInside)
         addButton.setImage(plusImage, for: .normal)
@@ -120,7 +128,7 @@ extension TrackerRecordViewCell {
         ])
     }
     
-    private func setupSubView() {
+    private func addSubView() {
         
         subView.layer.cornerRadius = 16
         subView.layer.masksToBounds = true
@@ -136,7 +144,7 @@ extension TrackerRecordViewCell {
         ])
     }
     
-    private func setupNameTrackerLabel() {
+    private func addNameTrackerLabel() {
         
         nameTrackerLabel.lineBreakMode = .byWordWrapping
         nameTrackerLabel.numberOfLines = 0
@@ -153,7 +161,7 @@ extension TrackerRecordViewCell {
         ])
     }
     
-    private func setupEmojiImageView() {
+    private func addEmojiImageView() {
         emojiLabel.clipsToBounds = true
         emojiLabel.layer.cornerRadius = 26/2
         emojiLabel.backgroundColor = .ypLightGray

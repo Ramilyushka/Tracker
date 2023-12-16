@@ -14,14 +14,14 @@ final class TrackersViewController: UIViewController {
     private var trackers: [Tracker] = []
     private var completedTrackers: [TrackerRecord] = []
     
-    private var selectedDate: Int?
+    private var selectedDate = Date()
     
     private let params = GeometricParams(cellCount: 2,
                                          leftInset: 16,
                                          rightInset: 16,
                                          cellSpacing: 10)
     
-    var collectionView: UICollectionView = {
+    private var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         return collectionView
@@ -39,6 +39,7 @@ final class TrackersViewController: UIViewController {
         super.viewDidLoad()
         addViews()
         mockData()
+        visibleCategories = categories
         filteredTrackers(date: Date(), text: "")
     }
     
@@ -54,13 +55,14 @@ final class TrackersViewController: UIViewController {
     }
     
     private func filteredTrackers(date: Date, text: String?) {
+        selectedDate = date
         let calendar = Calendar.current
         let filterWeekDay = calendar.component(.weekday, from: date)
         let filterText = (text ?? "").lowercased()
         
         visibleCategories = categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
-                let textCondition = filterText.isEmpty || tracker.name.lowercased().contains(filterText)
+                let textCondition = filterText.isEmpty || tracker.title.lowercased().contains(filterText)
                 let dateCondition =  tracker.schedule?.contains { weekday in
                     weekday.intValue == filterWeekDay
                 } == true
@@ -78,51 +80,46 @@ final class TrackersViewController: UIViewController {
         showStubTrackers()
     }
     
-    private func reloadData() {
-        visibleCategories = categories
-        collectionView.reloadData()
-    }
-    
     private func mockData(){
         
         let tracker1 = Tracker(
             id: UUID.init(),
-            name: "Поливать растения",
+            title: "Поливать растения",
             color: .green,
             emoji: "🌸",
             schedule: [Schedule.sunday, Schedule.monday, Schedule.wednesday, Schedule.friday])
         
         let tracker2 = Tracker(
             id: UUID.init(),
-            name: "Кошка заслонила камеру на созвоне",
+            title: "Кошка заслонила камеру на созвоне",
             color: .orange,
             emoji: "😻",
             schedule: [Schedule.sunday, Schedule.monday, Schedule.wednesday, Schedule.thursday, Schedule.friday])
         
         let tracker3 = Tracker(
             id: UUID.init(),
-            name: "Бабушка прислала открытку в вотсапе",
+            title: "Бабушка прислала открытку в вотсапе",
             color: .red,
             emoji: "🌸",
             schedule: [Schedule.sunday, Schedule.friday, Schedule.saturday])
         
         let tracker4 = Tracker(
             id: UUID.init(),
-            name: "Свидания в апреле",
+            title: "Свидания в апреле",
             color: .systemBlue,
             emoji: "❤️",
             schedule: [Schedule.monday])
         
         let tracker5 = Tracker(
             id: UUID.init(),
-            name: "Хорошее настроение",
+            title: "Хорошее настроение",
             color: .purple,
             emoji: "🙂",
             schedule: [Schedule.monday, Schedule.wednesday, Schedule.thursday, Schedule.friday])
         
         let tracker6 = Tracker(
             id: UUID.init(),
-            name: "Легкая тревожность",
+            title: "Легкая тревожность",
             color: .blue,
             emoji: "😪",
             schedule: [Schedule.wednesday, Schedule.thursday, Schedule.friday])
@@ -134,9 +131,6 @@ final class TrackersViewController: UIViewController {
         let category3 = TrackerCategory(name: "Самочувствие", trackers: [tracker5, tracker6])
         
         categories = [category1, category2, category3]
-        
-        
-        visibleCategories = categories
         
         completedTrackers = [
             TrackerRecord(id: tracker1.id, date: Date()),
@@ -181,7 +175,11 @@ extension TrackersViewController: UICollectionViewDataSource {
         let isCompleted = isTrackerCompleted(id: tracker.id)
         let completedDays = completedTrackers.filter { $0.id == tracker.id }.count
         
-        cell.setTrackerData(tracker: tracker, isCompleted: isCompleted, completedDays: completedDays, indexPath: indexPath)
+        cell.setTrackerData(tracker: tracker,
+                            selectedDate: self.selectedDate,
+                            isCompleted: isCompleted,
+                            completedDays: completedDays,
+                            indexPath: indexPath)
         
         return cell
     }
@@ -232,9 +230,7 @@ extension TrackersViewController: TrackerCellDelegate {
 
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let availableWidth = collectionView.frame.width - params.paddingWidth
         let cellWidth =  availableWidth / CGFloat(params.cellCount)
         return CGSize(width: cellWidth,
