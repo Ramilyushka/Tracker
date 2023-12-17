@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class AddTrackerViewController: UIViewController {
+final class ChooseTypeTrackerViewController: UIViewController {
     
     @IBOutlet private weak var headLabel: UILabel!
     @IBOutlet private weak var habitTrackerButton: UIButton!
@@ -19,17 +19,21 @@ final class AddTrackerViewController: UIViewController {
     }
     
     @IBAction private func didTapHabitButton() {
-        let addHabitTrackerVC = AddHabitTrackerViewController()
-        //addTrackerVC.trackersViewController = self
-        present(addHabitTrackerVC, animated: true)
+        openCreateTrackerVC(isHabit: true)
     }
     
     @IBAction private func didTapIrregularButton() {
-        
+        openCreateTrackerVC(isHabit: false)
+    }
+    
+    private func openCreateTrackerVC(isHabit: Bool) {
+        let addHabitTrackerVC = CreateTrackerViewController()
+        addHabitTrackerVC.isHabit = isHabit
+        present(addHabitTrackerVC, animated: true)
     }
 }
 
-extension AddTrackerViewController {
+extension ChooseTypeTrackerViewController {
     
     private func addViews() {
         view.backgroundColor = .ypWhite1

@@ -7,11 +7,11 @@
 
 import UIKit
 
-final class HabitTrackerTableCell: UITableViewCell {
+final class TrackerTableCell: UITableViewCell {
     
     static let reuseIdentifier = "habitCell"
     private let titleLabel = UILabel()
-    private let subTitleLabel = UILabel()
+    let subTitleLabel = UILabel()
     private let chevronImage = UIImageView()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -23,12 +23,26 @@ final class HabitTrackerTableCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateText(text: String) {
+    func updateTitle(text: String) {
         titleLabel.text = text
+    }
+    
+    func updateCategorySubTitle(text: String) {
+        subTitleLabel.text = text
+    }
+    
+    func updateScheduleSubTitle(selectedSchedule: [Schedule]) {
+        if !selectedSchedule.isEmpty {
+            if selectedSchedule.count == 7 {
+                subTitleLabel.text = "Каждый день"
+            } else {
+                subTitleLabel.text = selectedSchedule.map { $0.daysShortNames }.joined(separator: ", ")
+            }
+        }
     }
 }
 
-extension HabitTrackerTableCell {
+extension TrackerTableCell {
     
     private func addViews() {
         backgroundColor = .ypLightGray1
@@ -41,17 +55,16 @@ extension HabitTrackerTableCell {
         
         titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         titleLabel.textColor = .ypBlack1
-//        titleLabel.numberOfLines = 2
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.addSubview(titleLabel)
         
-        //let height = ((subTitleLabel.text?.isEmpty) != nil) ? 0 : -10.0
+        let heightSubtitle = ((subTitleLabel.text?.isEmpty) ?? true) ? 0 : -10.0
         
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: 0)
+            titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: heightSubtitle)
         ])
         
     }
@@ -60,7 +73,6 @@ extension HabitTrackerTableCell {
         
         subTitleLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         subTitleLabel.textColor = .ypGray1
-        //subTitleLabel.text = "Домашний уют"
         
         subTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         

@@ -44,7 +44,7 @@ final class TrackersViewController: UIViewController {
     }
     
     @IBAction private func didTapPlusButton() {
-        let addTrackerVC = AddTrackerViewController()
+        let addTrackerVC = ChooseTypeTrackerViewController()
         //addTrackerVC.trackersViewController = self
         present(addTrackerVC, animated: true)
     }

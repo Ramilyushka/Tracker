@@ -7,7 +7,14 @@
 
 import UIKit
 
-final class AddHabitTrackerViewController: UIViewController {
+final class CreateTrackerViewController: UIViewController {
+
+    var isHabit: Bool = true
+    
+    private var selectedCategory: String?
+    private var selectedSchedule: [Schedule] = []
+    private var selectedColor: UIColor?
+    private var selectedEmoji: String?
     
     private let colorsArray: [UIColor] = [
         .ypColorSelection1, .ypColorSelection2, .ypColorSelection3,
@@ -36,13 +43,13 @@ final class AddHabitTrackerViewController: UIViewController {
         return scrollView
     }()
     
-    private var habitTrackerTableView: UITableView = {
+    private var trackerTableView: UITableView = {
         let tableView = UITableView()
         tableView.register(
-            HabitTrackerTableCell.self,
-            forCellReuseIdentifier: HabitTrackerTableCell.reuseIdentifier)
+            TrackerTableCell.self,
+            forCellReuseIdentifier: TrackerTableCell.reuseIdentifier)
         tableView.layer.cornerRadius = 16
-        //tableView.separatorStyle = .none
+        tableView.separatorStyle = .none
         return tableView
     }()
     
@@ -64,31 +71,70 @@ final class AddHabitTrackerViewController: UIViewController {
     }
     
     @IBAction private func didTapCancelButton() {
+        dismiss(animated: true)
     }
     
     @IBAction private func didTapCreateButton() {
     }
+    
+    private func updateCreateButtonState() {
+        let isTitleTrackerEmpty = titleTrackerTextField.text?.isEmpty ?? true
+        let isCategorySelected = true
+        let isScheduleSelected = true
+        let isEmojiSelected = (selectedEmoji != nil)
+        let isColorSelected = (selectedColor != nil)
+        
+        if isTitleTrackerEmpty && isCategorySelected && isScheduleSelected && isEmojiSelected && isColorSelected {
+            createButton.backgroundColor = .ypBlack1
+        } else {
+            createButton.backgroundColor = .ypGray1
+        }
+    }
 }
 
-extension AddHabitTrackerViewController: UITableViewDataSource, UITableViewDelegate {
+//MARK: ScheduleSelectionDelegate
+extension CreateTrackerViewController: ScheduleSelectionDelegate {
+    func saveSelectedSchedule(_ selectedSchedule: [Schedule]) {
+        self.selectedSchedule = selectedSchedule
+        trackerTableView.reloadData()
+        updateCreateButtonState()
+    }
+}
+
+//MARK: UITextFieldDelegate
+extension CreateTrackerViewController: UITextFieldDelegate {
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        updateCreateButtonState()
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+}
+
+//MARK: TableViewDataSource & TableViewDelegate
+extension CreateTrackerViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return isHabit ? 2 : 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard
-            let cell = habitTrackerTableView.dequeueReusableCell(
-                withIdentifier: HabitTrackerTableCell.reuseIdentifier,
-                for: indexPath) as? HabitTrackerTableCell
+            let cell = trackerTableView.dequeueReusableCell(
+                withIdentifier: TrackerTableCell.reuseIdentifier,
+                for: indexPath) as? TrackerTableCell
         else {
             return UITableViewCell()
         }
         
         if indexPath.row == 0 {
-            cell.updateText(text: "Категория")
+            cell.updateTitle(text: "Категория")
+            cell.updateCategorySubTitle(text: "Спорт")
         }
-        if indexPath.row == 1 {
-            cell.updateText(text: "Расписание")
+        if isHabit && indexPath.row == 1 {
+            cell.updateTitle(text: "Расписание")
+            cell.updateScheduleSubTitle(selectedSchedule: self.selectedSchedule)
         }
         
         return cell
@@ -98,21 +144,37 @@ extension AddHabitTrackerViewController: UITableViewDataSource, UITableViewDeleg
         return 75
     }
     
-    //    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-    //        if indexPath.row == 0 {
-    //            let separatorInset: CGFloat = 16
-    //            let separatorWidth = tableView.bounds.width - separatorInset * 2
-    //            let separatorHeight: CGFloat = 1.0
-    //            //let separatorX = separatorInset
-    //            let separatorY = cell.frame.height - separatorHeight
-    //            let separatorView = UIView(frame: CGRect(x: separatorInset, y: separatorY, width: separatorWidth, height: separatorHeight))
-    //            separatorView.backgroundColor = .ypGray
-    //            cell.addSubview(separatorView)
-    //        }
-    //    }
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row != tableView.numberOfRows(inSection: indexPath.section) - 1 {
+            let separatorInset: CGFloat = 16
+            let separatorWidth = tableView.bounds.width - separatorInset * 2
+            let separatorHeight: CGFloat = 0.5
+            let separatorX = separatorInset
+            let separatorY = cell.frame.height - separatorHeight
+            let separatorView = UIView(frame: CGRect(x: separatorX, y: separatorY, width: separatorWidth, height: separatorHeight))
+            separatorView.backgroundColor = .ypGray1
+            cell.addSubview(separatorView)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 0 {
+            let cell = trackerTableView.cellForRow(at: indexPath) as? TrackerTableCell
+            
+            selectedCategory = cell?.subTitleLabel.text
+        }
+        if indexPath.row == 1 {
+            let scheduleViewController = ScheduleViewController()
+            scheduleViewController.delegate = self
+            present(scheduleViewController, animated: true, completion: nil)
+        }
+        trackerTableView.deselectRow(at: indexPath, animated: true)
+        updateCreateButtonState()
+    }
 }
 
-extension AddHabitTrackerViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+//MARK: UICollectionViewDataSource & UICollectionViewDelegateFlowLayout
+extension CreateTrackerViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == emojiCollectionView {
@@ -133,6 +195,7 @@ extension AddHabitTrackerViewController: UICollectionViewDataSource, UICollectio
             
             let index = indexPath.item % emojiArray.count
             cell.emojiLabel.text = emojiArray[index]
+            cell.layer.cornerRadius = 16
             return cell
             
         } else if collectionView == colorCollectionView {
@@ -144,6 +207,7 @@ extension AddHabitTrackerViewController: UICollectionViewDataSource, UICollectio
             
             let index = indexPath.item % colorsArray.count
             cell.colorView.backgroundColor = colorsArray[index]
+            cell.layer.cornerRadius = 8
             return cell
         }
         
@@ -154,8 +218,8 @@ extension AddHabitTrackerViewController: UICollectionViewDataSource, UICollectio
         
         guard let header = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
-            withReuseIdentifier: HabitCollectionViewHeader.reuseIdentifier,
-            for: indexPath) as? HabitCollectionViewHeader 
+            withReuseIdentifier: TrackerCollectionViewHeader.reuseIdentifier,
+            for: indexPath) as? TrackerCollectionViewHeader 
         else {
             return UICollectionReusableView()
         }
@@ -185,7 +249,6 @@ extension AddHabitTrackerViewController: UICollectionViewDataSource, UICollectio
       }
       
       func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-          // return UIEdgeInsets(top: 24, left: 0, bottom: 0, right: 0)
           return UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0)
       }
     
@@ -194,7 +257,50 @@ extension AddHabitTrackerViewController: UICollectionViewDataSource, UICollectio
     }
 }
 
-extension AddHabitTrackerViewController {
+//MARK: UICollectionViewDelegate
+extension CreateTrackerViewController: UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        if collectionView == emojiCollectionView {
+            
+            let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
+            cell?.backgroundColor = .ypLightGray
+            
+            selectedEmoji = cell?.emojiLabel.text
+            
+        } else if collectionView == colorCollectionView {
+            
+            let cell = collectionView.cellForItem(at: indexPath) as? ColorCollectionViewCell
+            cell?.layer.borderWidth = 3
+            cell?.layer.borderColor = cell?.colorView.backgroundColor?.withAlphaComponent(0.3).cgColor
+            
+            selectedColor = cell?.colorView.backgroundColor
+        }
+        
+        updateCreateButtonState()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        
+        if collectionView == emojiCollectionView {
+            
+            let cell = collectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
+            cell?.backgroundColor = .ypWhite1
+            selectedEmoji = nil
+            
+        } else if collectionView == colorCollectionView {
+            
+            let cell = collectionView.cellForItem(at: indexPath) as? ColorCollectionViewCell
+            cell?.layer.borderWidth = 0
+            selectedColor = nil
+        }
+        updateCreateButtonState()
+    }
+}
+
+//MARK: Layout
+extension CreateTrackerViewController {
     private func addViews() {
         view.backgroundColor = .ypWhite1
         addScrollView()
@@ -216,14 +322,14 @@ extension AddHabitTrackerViewController {
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -35)
         ])
     }
     
     private func addHeadLabel() {
         
         let label = UILabel()
-        label.text = "Создание привычки"
+        label.text = isHabit ? "Создание привычки" : "Создание нерегулярного события"
         label.font = UIFont(name: ypFontMedium, size: 16)
         label.textColor = .ypBlack1
         
@@ -266,29 +372,32 @@ extension AddHabitTrackerViewController {
         ])
         
         titleTrackerTextField = textField
+        titleTrackerTextField.delegate = self
     }
     
     private func addHabitTrackerTableView() {
         
-        habitTrackerTableView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.addSubview(habitTrackerTableView)
+        let height = isHabit ? 150.0: 75.0
+        
+        trackerTableView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(trackerTableView)
         
         NSLayoutConstraint.activate([
-            habitTrackerTableView.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 24),
-            habitTrackerTableView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
-            habitTrackerTableView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
-            habitTrackerTableView.heightAnchor.constraint(equalToConstant: 150)
+            trackerTableView.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 24),
+            trackerTableView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
+            trackerTableView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
+            trackerTableView.heightAnchor.constraint(equalToConstant: height)
         ])
         
-        habitTrackerTableView.dataSource = self
-        habitTrackerTableView.delegate = self
+        trackerTableView.dataSource = self
+        trackerTableView.delegate = self
     }
     
     private func addEmojiCollectionView() {
         emojiCollectionView.register(
-            HabitCollectionViewHeader.self,
+            TrackerCollectionViewHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: HabitCollectionViewHeader.reuseIdentifier)
+            withReuseIdentifier: TrackerCollectionViewHeader.reuseIdentifier)
         
         emojiCollectionView.register(
             EmojiCollectionViewCell.self,
@@ -299,7 +408,7 @@ extension AddHabitTrackerViewController {
         emojiCollectionView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            emojiCollectionView.topAnchor.constraint(equalTo: habitTrackerTableView.bottomAnchor, constant: 32),
+            emojiCollectionView.topAnchor.constraint(equalTo: trackerTableView.bottomAnchor, constant: 32),
             emojiCollectionView.heightAnchor.constraint(equalToConstant: 222),
             emojiCollectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
             emojiCollectionView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16)
@@ -312,9 +421,9 @@ extension AddHabitTrackerViewController {
     
     private func addColorCollectionView() {
         colorCollectionView.register(
-            HabitCollectionViewHeader.self,
+            TrackerCollectionViewHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: HabitCollectionViewHeader.reuseIdentifier)
+            withReuseIdentifier: TrackerCollectionViewHeader.reuseIdentifier)
         
         colorCollectionView.register(
             ColorCollectionViewCell.self,
@@ -340,7 +449,6 @@ extension AddHabitTrackerViewController {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.spacing = 8.0
-        //stack.alignment = .center
         stack.distribution = .fillEqually
         
         scrollView.addSubview(stack)
@@ -369,14 +477,6 @@ extension AddHabitTrackerViewController {
         button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
         
         stackView.addArrangedSubview(button)
-        //scrollView.addSubview(button)
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        NSLayoutConstraint.activate([
-//            button.topAnchor.constraint(equalTo: colorCollectionView.bottomAnchor, constant: 16),
-//            button.heightAnchor.constraint(equalToConstant: 60),
-//            button.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 19)
-//        ])
         
         cancelButton = button
     }
@@ -391,15 +491,6 @@ extension AddHabitTrackerViewController {
         button.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
         
         stackView.addArrangedSubview(button)
-//        scrollView.addSubview(button)
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        NSLayoutConstraint.activate([
-//            button.topAnchor.constraint(equalTo: colorCollectionView.bottomAnchor, constant: 16),
-//            button.heightAnchor.constraint(equalToConstant: 60),
-//            button.leadingAnchor.constraint(equalTo: cancelButton.leadingAnchor, constant: 8),
-//            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 16)
-//        ])
         
         createButton = button
     }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HabitCollectionViewHeader: UICollectionReusableView {
+class TrackerCollectionViewHeader: UICollectionReusableView {
     
     static let reuseIdentifier = "headerView"
     
