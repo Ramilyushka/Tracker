@@ -7,12 +7,19 @@
 
 import UIKit
 
+protocol TrackerActionDelegate: AnyObject {
+    func createTracker(categoryTitle: String, title: String, color: UIColor, emoji: String, schedule: [Schedule]?)
+}
+
 final class CreateTrackerViewController: UIViewController {
 
     var isHabit: Bool = true
     
+    weak var delegate: TrackerActionDelegate?
+    
+    private var selectedTitle: String?
     private var selectedCategory: String?
-    private var selectedSchedule: [Schedule] = []
+    private var selectedSchedule: [Schedule]?
     private var selectedColor: UIColor?
     private var selectedEmoji: String?
     
@@ -75,18 +82,36 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     @IBAction private func didTapCreateButton() {
+        guard
+            let category = selectedCategory,
+            let title = selectedTitle,
+            let color = selectedColor,
+            let emoji = selectedEmoji
+        else {
+            return
+        }
+        delegate?.createTracker(
+            categoryTitle: category,
+            title: title,
+            color: color,
+            emoji: emoji,
+            schedule: selectedSchedule)
+        
+        self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     
     private func updateCreateButtonState() {
-        let isTitleTrackerEmpty = titleTrackerTextField.text?.isEmpty ?? true
+        let isTitleSelected = !(titleTrackerTextField.text?.isEmpty ?? true)
         let isCategorySelected = true
-        let isScheduleSelected = true
+        let isScheduleSelected = !(selectedSchedule?.isEmpty ?? (!isHabit))
         let isEmojiSelected = (selectedEmoji != nil)
         let isColorSelected = (selectedColor != nil)
         
-        if isTitleTrackerEmpty && isCategorySelected && isScheduleSelected && isEmojiSelected && isColorSelected {
+        if isTitleSelected && isCategorySelected  && isEmojiSelected && isColorSelected && isScheduleSelected {
+            createButton.isEnabled = true
             createButton.backgroundColor = .ypBlack1
         } else {
+            createButton.isEnabled = false
             createButton.backgroundColor = .ypGray1
         }
     }
@@ -104,6 +129,7 @@ extension CreateTrackerViewController: ScheduleSelectionDelegate {
 //MARK: UITextFieldDelegate
 extension CreateTrackerViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
+        selectedTitle = titleTrackerTextField.text
         updateCreateButtonState()
     }
     
@@ -130,11 +156,13 @@ extension CreateTrackerViewController: UITableViewDataSource, UITableViewDelegat
         
         if indexPath.row == 0 {
             cell.updateTitle(text: "Категория")
-            cell.updateCategorySubTitle(text: "Спорт")
+            //cell.updateCategorySubTitle(text: "Домашний уют") //default for debug
+            cell.updateCategorySubTitle(text: "Спорт") //default for debug
+            selectedCategory = cell.subTitleLabel.text
         }
         if isHabit && indexPath.row == 1 {
             cell.updateTitle(text: "Расписание")
-            cell.updateScheduleSubTitle(selectedSchedule: self.selectedSchedule)
+            cell.updateScheduleSubTitle(selectedSchedule: selectedSchedule)
         }
         
         return cell
@@ -160,8 +188,8 @@ extension CreateTrackerViewController: UITableViewDataSource, UITableViewDelegat
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
             let cell = trackerTableView.cellForRow(at: indexPath) as? TrackerTableCell
-            
             selectedCategory = cell?.subTitleLabel.text
+            updateCreateButtonState()
         }
         if indexPath.row == 1 {
             let scheduleViewController = ScheduleViewController()
@@ -169,7 +197,6 @@ extension CreateTrackerViewController: UITableViewDataSource, UITableViewDelegat
             present(scheduleViewController, animated: true, completion: nil)
         }
         trackerTableView.deselectRow(at: indexPath, animated: true)
-        updateCreateButtonState()
     }
 }
 
@@ -488,6 +515,7 @@ extension CreateTrackerViewController {
         button.setTitleColor(.ypWhite1, for: .normal)
         button.backgroundColor = .ypGray1
         button.layer.cornerRadius = 16
+        button.isEnabled = false
         button.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
         
         stackView.addArrangedSubview(button)

@@ -53,7 +53,7 @@ final class ScheduleTableCell: UITableViewCell {
         if index == 6 {
             day = .sunday
         } else {
-            day = Schedule(rawValue: index + 2)!
+            day = Schedule(rawValue: index+1)!
         }
         return day
     }

@@ -31,12 +31,17 @@ final class TrackerTableCell: UITableViewCell {
         subTitleLabel.text = text
     }
     
-    func updateScheduleSubTitle(selectedSchedule: [Schedule]) {
-        if !selectedSchedule.isEmpty {
-            if selectedSchedule.count == 7 {
+    func updateScheduleSubTitle(selectedSchedule: [Schedule]?) {
+        
+        guard let schedule = selectedSchedule else {
+            return
+        }
+        
+        if !schedule.isEmpty {
+            if schedule.count == 7 {
                 subTitleLabel.text = "Каждый день"
             } else {
-                subTitleLabel.text = selectedSchedule.map { $0.daysShortNames }.joined(separator: ", ")
+                subTitleLabel.text = schedule.map { $0.daysShortNames }.joined(separator: ", ")
             }
         }
     }

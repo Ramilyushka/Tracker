@@ -80,17 +80,9 @@
 				A80D0CD12B2B7A7900C44AF0 /* EmojiCollectionViewCell.swift */,
 				A80D0CD52B2DD8FC00C44AF0 /* ColorCollectionViewCell.swift */,
 				A80D0CD32B2CC00500C44AF0 /* TrackerCollectionViewHeader.swift */,
-			);
-			path = Cell;
-			sourceTree = "<group>";
-		};
-		A80D0CD92B2E249B00C44AF0 /* Schedule */ = {
-			isa = PBXGroup;
-			children = (
-				A80D0CD72B2E240F00C44AF0 /* ScheduleViewController.swift */,
 				A80D0CDA2B2E475600C44AF0 /* ScheduleTableCell.swift */,
 			);
-			path = Schedule;
+			path = Cell;
 			sourceTree = "<group>";
 		};
 		A8AC66892AF2A8E900AA5C7E = {
@@ -177,10 +169,10 @@
 		A8AC67362B123B1B00AA5C7E /* CreateTracker */ = {
 			isa = PBXGroup;
 			children = (
-				A80D0CD92B2E249B00C44AF0 /* Schedule */,
-				A80D0CD02B2B7A4800C44AF0 /* Cell */,
 				A80D0CCA2B264E9300C44AF0 /* ChooseTypeTrackerViewController.swift */,
 				A80D0CCC2B2665E600C44AF0 /* CreateTrackerViewController.swift */,
+				A80D0CD72B2E240F00C44AF0 /* ScheduleViewController.swift */,
+				A80D0CD02B2B7A4800C44AF0 /* Cell */,
 			);
 			path = CreateTracker;
 			sourceTree = "<group>";

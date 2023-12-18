@@ -57,9 +57,11 @@ final class TrackerRecordViewCell: UICollectionViewCell {
         if selectedDate > Date() {
             addButton.isEnabled = false
             addButton.setImage(plusImage, for: .normal)
+            addButton.alpha = 0.3
         } else {
             addButton.isEnabled = true
             addButton.setImage(isCompleted ? doneImage: plusImage, for: .normal)
+            addButton.alpha = 1.0
         }
         
         daysLabel.text = completedDays.description + " дней"

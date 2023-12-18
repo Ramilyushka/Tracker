@@ -15,8 +15,9 @@ struct Tracker {
     let emoji: String
     let schedule: [Schedule]?
 }
+
+//сущность для расписания
 enum Schedule: Int, CaseIterable {
-    
     case sunday = 1
     case monday = 2
     case tuesday = 3
@@ -85,7 +86,7 @@ enum Schedule: Int, CaseIterable {
 
 //сущность для хранения трекеров по категориям.
 struct TrackerCategory {
-    let name: String
+    let title: String
     let trackers: [Tracker]
 }
 

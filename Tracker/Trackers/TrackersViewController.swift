@@ -15,6 +15,7 @@ final class TrackersViewController: UIViewController {
     private var completedTrackers: [TrackerRecord] = []
     
     private var selectedDate = Date()
+    private var selectedSearchText: String?
     
     private let params = GeometricParams(cellCount: 2,
                                          leftInset: 16,
@@ -44,9 +45,9 @@ final class TrackersViewController: UIViewController {
     }
     
     @IBAction private func didTapPlusButton() {
-        let addTrackerVC = ChooseTypeTrackerViewController()
-        //addTrackerVC.trackersViewController = self
-        present(addTrackerVC, animated: true)
+        let chooseTypeTrackerVC = ChooseTypeTrackerViewController()
+        chooseTypeTrackerVC.delegate = self
+        present(chooseTypeTrackerVC, animated: true)
     }
     
     @IBAction  private func datePickerValueChanged() {
@@ -73,7 +74,7 @@ final class TrackersViewController: UIViewController {
                 return nil
             }
             
-            return TrackerCategory(name: category.name, trackers: trackers)
+            return TrackerCategory(title: category.title, trackers: trackers)
         }
         
         collectionView.reloadData()
@@ -85,50 +86,50 @@ final class TrackersViewController: UIViewController {
         let tracker1 = Tracker(
             id: UUID.init(),
             title: "Поливать растения",
-            color: .green,
+            color: .ypColorSelection5,
             emoji: "🌸",
             schedule: [Schedule.sunday, Schedule.monday, Schedule.wednesday, Schedule.friday])
         
         let tracker2 = Tracker(
             id: UUID.init(),
             title: "Кошка заслонила камеру на созвоне",
-            color: .orange,
+            color: .ypColorSelection2,
             emoji: "😻",
             schedule: [Schedule.sunday, Schedule.monday, Schedule.wednesday, Schedule.thursday, Schedule.friday])
         
         let tracker3 = Tracker(
             id: UUID.init(),
             title: "Бабушка прислала открытку в вотсапе",
-            color: .red,
+            color: .colorSelection1,
             emoji: "🌸",
             schedule: [Schedule.sunday, Schedule.friday, Schedule.saturday])
         
         let tracker4 = Tracker(
             id: UUID.init(),
             title: "Свидания в апреле",
-            color: .systemBlue,
+            color: .ypColorSelection8,
             emoji: "❤️",
             schedule: [Schedule.monday])
         
         let tracker5 = Tracker(
             id: UUID.init(),
             title: "Хорошее настроение",
-            color: .purple,
+            color: .ypColorSelection6,
             emoji: "🙂",
             schedule: [Schedule.monday, Schedule.wednesday, Schedule.thursday, Schedule.friday])
         
         let tracker6 = Tracker(
             id: UUID.init(),
             title: "Легкая тревожность",
-            color: .blue,
+            color: .ypColorSelection14,
             emoji: "😪",
             schedule: [Schedule.wednesday, Schedule.thursday, Schedule.friday])
         
         trackers = [tracker1, tracker2, tracker3, tracker4, tracker5, tracker6]
         
-        let category1 = TrackerCategory(name: "Домашний уют", trackers: [tracker1])
-        let category2 = TrackerCategory(name: "Радостные мелочи", trackers: [tracker2, tracker3, tracker4])
-        let category3 = TrackerCategory(name: "Самочувствие", trackers: [tracker5, tracker6])
+        let category1 = TrackerCategory(title: "Домашний уют", trackers: [tracker1])
+        let category2 = TrackerCategory(title: "Радостные мелочи", trackers: [tracker2, tracker3, tracker4])
+        let category3 = TrackerCategory(title: "Самочувствие", trackers: [tracker5, tracker6])
         
         categories = [category1, category2, category3]
         
@@ -139,9 +140,43 @@ final class TrackersViewController: UIViewController {
     }
 }
 
+//MARK: TrackerActionDelegate
+extension TrackersViewController: TrackerActionDelegate {
+    
+    func createTracker(categoryTitle: String, title: String, color: UIColor, emoji: String, schedule: [Schedule]?) {
+        let newTracker = Tracker(
+            id: UUID.init(),
+            title: title,
+            color: color,
+            emoji: emoji,
+            schedule: schedule)
+        
+        let newCategory = TrackerCategory(
+            title: categoryTitle,
+            trackers: [newTracker])
+        
+        var updatedCategories = categories.map { category in
+            if (category.title == categoryTitle) {
+                var updatedTrackers = category.trackers
+                updatedTrackers.append(newTracker)
+                return TrackerCategory(title: category.title, trackers: updatedTrackers)
+            }
+            return category
+        }
+        
+        if !updatedCategories.contains(where: { $0.title == newCategory.title }) {
+            updatedCategories.append(newCategory)
+        }
+        categories = updatedCategories
+        filteredTrackers(date: selectedDate, text: selectedSearchText)
+    }
+}
+
+//MARK: UITextFieldDelegate
 extension TrackersViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
+        selectedSearchText = searchTextField.text
         filteredTrackers(date: datePicker.date, text: searchTextField.text)
     }
     
@@ -150,6 +185,7 @@ extension TrackersViewController: UITextFieldDelegate {
     }
 }
 
+//MARK: UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -204,12 +240,13 @@ extension TrackersViewController: UICollectionViewDataSource {
             return UICollectionReusableView()
         }
         if visibleCategories[indexPath.section].trackers.count != 0 {
-            header.titleLabel.text = visibleCategories[indexPath.section].name
+            header.titleLabel.text = visibleCategories[indexPath.section].title
         }
         return header
     }
 }
 
+//MARK: TrackerCellDelegate
 extension TrackersViewController: TrackerCellDelegate {
     func completeTracker(id: UUID, at indexPath: IndexPath) {
         let trackerRecord = TrackerRecord(id: id, date: datePicker.date)
@@ -228,6 +265,7 @@ extension TrackersViewController: TrackerCellDelegate {
     }
 }
 
+//MARK: UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -261,6 +299,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+//MARK: Layout
 extension TrackersViewController {
     
     private func addViews(){
@@ -314,9 +353,9 @@ extension TrackersViewController {
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
         datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.calendar = Calendar(identifier: .gregorian)
+        
         datePicker.calendar.firstWeekday = 2
-//        datePicker.backgroundColor = .ypBlue1
-//        datePicker.tintColor = .ypWhite1
         datePicker.clipsToBounds = true
         datePicker.layer.cornerRadius = 8
         datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)

@@ -9,6 +9,8 @@ import UIKit
 
 final class ChooseTypeTrackerViewController: UIViewController {
     
+    weak var delegate: TrackerActionDelegate?
+    
     @IBOutlet private weak var headLabel: UILabel!
     @IBOutlet private weak var habitTrackerButton: UIButton!
     @IBOutlet private weak var irregularTrackerButton: UIButton!
@@ -29,6 +31,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
     private func openCreateTrackerVC(isHabit: Bool) {
         let addHabitTrackerVC = CreateTrackerViewController()
         addHabitTrackerVC.isHabit = isHabit
+        addHabitTrackerVC.delegate = self.delegate
         present(addHabitTrackerVC, animated: true)
     }
 }
