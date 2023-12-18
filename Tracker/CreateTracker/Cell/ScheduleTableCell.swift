@@ -49,13 +49,11 @@ final class ScheduleTableCell: UITableViewCell {
     }
     
     func setDay(index: Int) -> Schedule {
-        let day: Schedule
         if index == 6 {
-            day = .sunday
+            return .sunday
         } else {
-            day = Schedule(rawValue: index+1)!
+            return Schedule(rawValue: index)!
         }
-        return day
     }
     
     private func addViews() {

@@ -39,6 +39,7 @@ final class CreateTrackerViewController: UIViewController {
     
     @IBOutlet private weak var headLabel: UILabel!
     @IBOutlet private weak var titleTrackerTextField: UITextField!
+    @IBOutlet private weak var errorLimitLabel: UILabel!
     @IBOutlet private weak var stackView: UIStackView!
     @IBOutlet private weak var createButton: UIButton!
     @IBOutlet private weak var cancelButton: UIButton!
@@ -136,6 +137,17 @@ extension CreateTrackerViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let textFieldText = textField.text,
+              let rangeOfTextToReplace = Range(range, in: textFieldText) else {
+            return false
+        }
+        let substringToReplace = textFieldText[rangeOfTextToReplace]
+        let count = textFieldText.count - substringToReplace.count + string.count
+        errorLimitLabel.isHidden = (count <= 38)
+        return count <= 38
     }
 }
 
@@ -333,6 +345,7 @@ extension CreateTrackerViewController {
         addScrollView()
         addHeadLabel()
         addTitleTrackerTextField()
+        addErrorLimitLabel()
         addHabitTrackerTableView()
         addEmojiCollectionView()
         addColorCollectionView()
@@ -383,9 +396,8 @@ extension CreateTrackerViewController {
         
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 0))
         textField.leftViewMode = .always
-        textField.keyboardType = .default
-        textField.returnKeyType = .done
-        textField.becomeFirstResponder()
+        
+        textField.clearButtonMode = .whileEditing
         
         textField.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(textField)
@@ -402,6 +414,25 @@ extension CreateTrackerViewController {
         titleTrackerTextField.delegate = self
     }
     
+    private func addErrorLimitLabel() {
+        
+        let errorLabel = UILabel()
+        errorLabel.font = UIFont(name: ypFontMedium, size: 17)
+        errorLabel.text = "Ограничение 38 символов"
+        errorLabel.textColor = .ypRed
+        errorLabel.isHidden = true
+        
+        errorLabel.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(errorLabel)
+        
+        NSLayoutConstraint.activate([
+            errorLabel.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 8),
+            errorLabel.centerXAnchor.constraint(equalTo: titleTrackerTextField.centerXAnchor)
+        ])
+        
+        errorLimitLabel = errorLabel
+    }
+    
     private func addHabitTrackerTableView() {
         
         let height = isHabit ? 150.0: 75.0
@@ -410,7 +441,7 @@ extension CreateTrackerViewController {
         scrollView.addSubview(trackerTableView)
         
         NSLayoutConstraint.activate([
-            trackerTableView.topAnchor.constraint(equalTo: titleTrackerTextField.bottomAnchor, constant: 24),
+            trackerTableView.topAnchor.constraint(equalTo: errorLimitLabel.bottomAnchor, constant: 24),
             trackerTableView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
             trackerTableView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
             trackerTableView.heightAnchor.constraint(equalToConstant: height)
