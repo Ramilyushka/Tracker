@@ -29,7 +29,7 @@ final class ChooseTypeTrackerViewController: UIViewController {
     }
     
     private func openCreateTrackerVC(isHabit: Bool) {
-        let addHabitTrackerVC = CreateTrackerViewController()
+        let addHabitTrackerVC = CreateNewTrackerViewController()
         addHabitTrackerVC.isHabit = isHabit
         addHabitTrackerVC.delegate = self.delegate
         present(addHabitTrackerVC, animated: true)
@@ -49,7 +49,8 @@ extension ChooseTypeTrackerViewController {
         
         let label = UILabel()
         label.text = "Создание трекера"
-        label.font = UIFont(name: ypFontMedium, size: 16)
+        //label.font = UIFont(name: FontsString.sfProMedium, size: 16)
+        label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = .black
         
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -71,7 +72,7 @@ extension ChooseTypeTrackerViewController {
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
         button.setTitle("Привычка", for: .normal)
-        button.titleLabel?.font = UIFont(name: ypFontMedium, size: 16)
+        button.titleLabel?.font = UIFont(name: FontsString.sfProMedium, size: 16)
         
         button.addTarget(self, action: #selector(didTapHabitButton), for: .touchUpInside)
         
@@ -95,7 +96,7 @@ extension ChooseTypeTrackerViewController {
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
         button.setTitle("Нерегулярные событие", for: .normal)
-        button.titleLabel?.font = UIFont(name: ypFontMedium, size: 16)
+        button.titleLabel?.font = UIFont(name: FontsString.sfProMedium, size: 16)
         
         button.addTarget(self, action: #selector(didTapIrregularButton), for: .touchUpInside)
         

@@ -13,7 +13,7 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
     
     let emojiLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 32)
+        label.font = UIFont(name: FontsString.sfProRegular, size: 32)
         label.textAlignment = .center
         label.layer.cornerRadius = 16
         label.translatesAutoresizingMaskIntoConstraints = false

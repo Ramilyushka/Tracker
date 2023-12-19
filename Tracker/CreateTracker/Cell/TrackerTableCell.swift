@@ -11,8 +11,10 @@ final class TrackerTableCell: UITableViewCell {
     
     static let reuseIdentifier = "habitCell"
     private let titleLabel = UILabel()
-    let subTitleLabel = UILabel()
+    private let subTitleLabel = UILabel()
     private let chevronImage = UIImageView()
+    
+    private var titleLabelCenterYAnchorConstraint: NSLayoutConstraint!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -23,15 +25,18 @@ final class TrackerTableCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func updateTitle(text: String) {
-        titleLabel.text = text
+    func updateCategory(title: String, subTitle: String?) {
+        titleLabel.text = title
+        subTitleLabel.text = subTitle
+        
+        titleLabelCenterYAnchorConstraint.constant = subTitle != nil ? -11 : 0
     }
     
-    func updateCategorySubTitle(text: String) {
-        subTitleLabel.text = text
-    }
-    
-    func updateScheduleSubTitle(selectedSchedule: [Schedule]?) {
+    func updateSchedule(title: String, selectedSchedule: [Schedule]?) {
+        
+        titleLabel.text = title
+        
+        titleLabelCenterYAnchorConstraint.constant = selectedSchedule != nil ? -11 : 0
         
         guard let schedule = selectedSchedule else {
             return
@@ -58,25 +63,25 @@ extension TrackerTableCell {
     
     private func addTitleLabel() {
         
-        titleLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        titleLabel.font = UIFont(name: FontsString.sfProRegular, size: 17)
         titleLabel.textColor = .ypBlack1
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.addSubview(titleLabel)
-        
-        let heightSubtitle = ((subTitleLabel.text?.isEmpty) ?? true) ? 0 : -10.0
+
+        titleLabelCenterYAnchorConstraint = titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: 0)
         
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: heightSubtitle)
+            titleLabelCenterYAnchorConstraint,
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16)
         ])
         
     }
     
     private func addSubTitleLabel() {
         
-        subTitleLabel.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        subTitleLabel.font = UIFont(name: FontsString.sfProRegular, size: 17)
         subTitleLabel.textColor = .ypGray1
         
         subTitleLabel.translatesAutoresizingMaskIntoConstraints = false

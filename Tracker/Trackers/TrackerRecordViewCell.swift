@@ -21,8 +21,8 @@ final class TrackerRecordViewCell: UICollectionViewCell {
     private var trackerID: UUID?
     private var indexPath: IndexPath?
     
-    private var subView = UIView()
-    private let nameTrackerLabel = UILabel()
+    private var view = UIView()
+    private let titleTrackerLabel = UILabel()
     private let emojiLabel = UILabel()
     private var daysLabel = UILabel()
     private var addButton = UIButton()
@@ -48,12 +48,13 @@ final class TrackerRecordViewCell: UICollectionViewCell {
         trackerID = tracker.id
         self.indexPath = indexPath
         
-        subView.backgroundColor = tracker.color
-        nameTrackerLabel.text = tracker.title
+        view.backgroundColor = tracker.color
+        titleTrackerLabel.text = tracker.title
         emojiLabel.text = tracker.emoji
         
         self.isCompleted = isCompleted
         addButton.backgroundColor = tracker.color
+        
         if selectedDate > Date() {
             addButton.isEnabled = false
             addButton.setImage(plusImage, for: .normal)
@@ -61,7 +62,7 @@ final class TrackerRecordViewCell: UICollectionViewCell {
         } else {
             addButton.isEnabled = true
             addButton.setImage(isCompleted ? doneImage: plusImage, for: .normal)
-            addButton.alpha = 1.0
+            addButton.alpha = isCompleted ? 0.3 : 1.0
         }
         
         daysLabel.text = completedDays.description + " дней"
@@ -87,22 +88,71 @@ final class TrackerRecordViewCell: UICollectionViewCell {
 extension TrackerRecordViewCell {
     
     private func addViewCell() {
-        addSubView()
-        addEmojiImageView()
-        addNameTrackerLabel()
+        addView()
+        addEmojiLabel()
+        addTitleTrackerLabel()
         addDaysLabel()
         addAddButton()
     }
     
+    private func addView() {
+        
+        view.layer.cornerRadius = 16
+        view.layer.masksToBounds = true
+        
+        contentView.addSubview(view)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            view.heightAnchor.constraint(equalToConstant: 90),
+            view.topAnchor.constraint(equalTo: contentView.topAnchor),
+            view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        ])
+    }
+    
+    private func addEmojiLabel() {
+        emojiLabel.clipsToBounds = true
+        emojiLabel.layer.cornerRadius = 26/2
+        emojiLabel.backgroundColor = .ypLightGray
+        emojiLabel.textAlignment = .center
+        view.addSubview(emojiLabel)
+        emojiLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            emojiLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 12),
+            emojiLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
+            emojiLabel.heightAnchor.constraint(equalToConstant: 26),
+            emojiLabel.widthAnchor.constraint(equalToConstant: 26)
+        ])
+    }
+    
+    private func addTitleTrackerLabel() {
+        
+        titleTrackerLabel.lineBreakMode = .byWordWrapping
+        titleTrackerLabel.numberOfLines = 0
+        titleTrackerLabel.textColor = .white
+        titleTrackerLabel.font =  UIFont(name: FontsString.sfProMedium, size: 12)
+        
+        view.addSubview(titleTrackerLabel)
+        titleTrackerLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            titleTrackerLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),
+            titleTrackerLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 12),
+            titleTrackerLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -12)
+        ])
+    }
+    
     private func addDaysLabel() {
         
-        daysLabel.font = UIFont(name: ypFontMedium, size: 12)
+        daysLabel.font = UIFont(name: FontsString.sfProMedium, size: 12)
         
         contentView.addSubview(daysLabel)
         daysLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            daysLabel.topAnchor.constraint(equalTo: subView.bottomAnchor, constant: 16),
+            daysLabel.topAnchor.constraint(equalTo: view.bottomAnchor, constant: 16),
             daysLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             daysLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
         ])
@@ -124,58 +174,9 @@ extension TrackerRecordViewCell {
         NSLayoutConstraint.activate([
             addButton.heightAnchor.constraint(equalToConstant: 34),
             addButton.widthAnchor.constraint(equalToConstant: 34),
-            addButton.topAnchor.constraint(equalTo: subView.bottomAnchor, constant: 8),
+            addButton.topAnchor.constraint(equalTo: view.bottomAnchor, constant: 8),
             addButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             addButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
-        ])
-    }
-    
-    private func addSubView() {
-        
-        subView.layer.cornerRadius = 16
-        subView.layer.masksToBounds = true
-        
-        contentView.addSubview(subView)
-        subView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            subView.heightAnchor.constraint(equalToConstant: 90),
-            subView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            subView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            subView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        ])
-    }
-    
-    private func addNameTrackerLabel() {
-        
-        nameTrackerLabel.lineBreakMode = .byWordWrapping
-        nameTrackerLabel.numberOfLines = 0
-        nameTrackerLabel.textColor = .white
-        nameTrackerLabel.font =  UIFont(name: ypFontMedium, size: 12)
-        
-        subView.addSubview(nameTrackerLabel)
-        nameTrackerLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            nameTrackerLabel.leadingAnchor.constraint(equalTo: subView.leadingAnchor, constant: 12),
-            nameTrackerLabel.trailingAnchor.constraint(equalTo: subView.trailingAnchor, constant: 12),
-            nameTrackerLabel.bottomAnchor.constraint(equalTo: subView.bottomAnchor, constant: -12)
-        ])
-    }
-    
-    private func addEmojiImageView() {
-        emojiLabel.clipsToBounds = true
-        emojiLabel.layer.cornerRadius = 26/2
-        emojiLabel.backgroundColor = .ypLightGray
-        emojiLabel.textAlignment = .center
-        subView.addSubview(emojiLabel)
-        emojiLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            emojiLabel.topAnchor.constraint(equalTo: subView.topAnchor, constant: 12),
-            emojiLabel.leadingAnchor.constraint(equalTo: subView.leadingAnchor, constant: 12),
-            emojiLabel.heightAnchor.constraint(equalToConstant: 26),
-            emojiLabel.widthAnchor.constraint(equalToConstant: 26)
         ])
     }
 }

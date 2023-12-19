@@ -28,9 +28,11 @@ final class TrackersViewController: UIViewController {
         return collectionView
     }()
     
+    private weak var datePicker: UIDatePicker!
+    
     @IBOutlet private weak var plusButton: UIButton!
     @IBOutlet private weak var headLabel: UILabel!
-    @IBOutlet private weak var datePicker: UIDatePicker!
+    
     @IBOutlet private weak var searchTextField: UISearchTextField!
     @IBOutlet private weak var stubLabel: UILabel!
     @IBOutlet private weak var stubImageView: UIImageView!
@@ -86,14 +88,14 @@ final class TrackersViewController: UIViewController {
         let tracker1 = Tracker(
             id: UUID.init(),
             title: "Поливать растения",
-            color: .ypColorSelection5,
+            color: .ypGreenColorSelection,
             emoji: "🌸",
             schedule: [Schedule.sunday, Schedule.monday, Schedule.wednesday, Schedule.friday])
         
         let tracker2 = Tracker(
             id: UUID.init(),
             title: "Кошка заслонила камеру на созвоне",
-            color: .ypColorSelection2,
+            color: .ypOrangeColorSelection,
             emoji: "😻",
             schedule: [Schedule.sunday, Schedule.monday, Schedule.wednesday, Schedule.thursday, Schedule.friday])
         
@@ -107,21 +109,21 @@ final class TrackersViewController: UIViewController {
         let tracker4 = Tracker(
             id: UUID.init(),
             title: "Свидания в апреле",
-            color: .ypColorSelection8,
+            color: .ypLilacColorSelection,
             emoji: "❤️",
             schedule: [Schedule.monday])
         
         let tracker5 = Tracker(
             id: UUID.init(),
             title: "Хорошее настроение",
-            color: .ypColorSelection6,
+            color: .ypDarkPinkColorSelection,
             emoji: "🙂",
             schedule: [Schedule.monday, Schedule.wednesday, Schedule.thursday, Schedule.friday])
         
         let tracker6 = Tracker(
             id: UUID.init(),
             title: "Легкая тревожность",
-            color: .ypColorSelection14,
+            color: .ypLightBlueColorSelection,
             emoji: "😪",
             schedule: [Schedule.wednesday, Schedule.thursday, Schedule.friday])
         
@@ -328,7 +330,7 @@ extension TrackersViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 7),
+            collectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 24),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
@@ -346,30 +348,38 @@ extension TrackersViewController {
         button.setImage( UIImage(named: "add_tracker") ?? UIImage(), for: .normal)
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
+        
+        plusButton = button
     }
     
     private func addDatePicker() {
-        let datePicker = UIDatePicker()
-        datePicker.datePickerMode = .date
-        datePicker.preferredDatePickerStyle = .compact
-        datePicker.locale = Locale(identifier: "ru_RU")
-        datePicker.calendar = Calendar(identifier: .gregorian)
+        let picker = UIDatePicker()
+        picker.locale = Locale(identifier: "ru_RU")
+        picker.calendar = Calendar(identifier: .gregorian)
+        picker.datePickerMode = .date
+        picker.preferredDatePickerStyle = .compact
         
-        datePicker.calendar.firstWeekday = 2
-        datePicker.clipsToBounds = true
-        datePicker.layer.cornerRadius = 8
-        datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        picker.calendar.firstWeekday = 2
+        picker.clipsToBounds = true
+        picker.layer.cornerRadius = 8
+        picker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+        picker.translatesAutoresizingMaskIntoConstraints = false
         
-        self.datePicker = datePicker
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: picker)
+        
+        NSLayoutConstraint.activate([
+            picker.widthAnchor.constraint(equalToConstant: 120)
+        ])
+        
+        datePicker = picker
     }
     
     private func addHeadLabel() {
         
         let label = UILabel()
         label.text = "Трекеры"
-        label.font = UIFont(name: ypFontBold, size: 34)
+        label.font = UIFont(name: FontsString.sfProBold, size: 34)
         label.textColor = .black
         
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -395,6 +405,7 @@ extension TrackersViewController {
         
         NSLayoutConstraint.activate([
             search.topAnchor.constraint(equalTo: headLabel.bottomAnchor, constant: 7),
+            search.heightAnchor.constraint(equalToConstant: 36),
             search.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             search.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
         ])
@@ -424,8 +435,8 @@ extension TrackersViewController {
     private func addStubLabel() {
         
         let label = UILabel()
-        label.text = "Добавьте первый трекер"
-        label.font = UIFont(name: ypFontMedium, size: 12)
+        label.text = "Что будем отслеживать?"
+        label.font = UIFont(name: FontsString.sfProMedium, size: 12)
         label.textColor = .black
         
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -448,7 +459,7 @@ extension TrackersViewController {
                 named: isZeroTrackers ? "stub_zero_trackers" : "stub_not_found_trackers") ?? UIImage()
             
             stubLabel.isHidden = false
-            stubLabel.text = isZeroTrackers ? "Добавьте первый трекер" : "Ничего не найдено"
+            stubLabel.text = isZeroTrackers ? "Что будем отслеживать?" : "Ничего не найдено"
         } else {
             collectionView.isHidden = false
             stubImageView.isHidden = true

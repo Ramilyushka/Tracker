@@ -7,14 +7,14 @@
 
 import UIKit
 
-class TrackerCollectionViewHeader: UICollectionReusableView {
+final class TrackerCollectionViewHeader: UICollectionReusableView {
     
     static let reuseIdentifier = "headerView"
     
     let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack1
-        label.font = UIFont.systemFont(ofSize: 19, weight: .bold)
+        label.font = UIFont(name: FontsString.sfProBold, size: 19)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -23,7 +23,6 @@ class TrackerCollectionViewHeader: UICollectionReusableView {
         super.init(frame: frame)
         
         addSubview(titleLabel)
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),

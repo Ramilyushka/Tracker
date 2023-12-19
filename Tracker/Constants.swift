@@ -7,5 +7,8 @@
 
 import Foundation
 
-let ypFontMedium = "YSDisplay-Medium"
-let ypFontBold = "YSDisplay-Bold"
+enum FontsString {
+    static let sfProRegular = "SFPro-Regular"
+    static let sfProMedium = "SFPro-Medium"
+    static let sfProBold = "SFPro-Bold"
+}

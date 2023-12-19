@@ -39,7 +39,7 @@ final class ScheduleViewController: UIViewController {
             guard let cell = elem as? ScheduleTableCell else {
                 return
             }
-            if cell.selectedDay {
+            if cell.isSelectedDay() {
                 selected.append(cell.setDay(index: index))
             }
         }
@@ -100,7 +100,7 @@ extension ScheduleViewController {
         
         let label = UILabel()
         label.text = "Расписание"
-        label.font = UIFont(name: ypFontMedium, size: 16)
+        label.font = UIFont(name: FontsString.sfProMedium, size: 16)
         label.textColor = .ypBlack1
         
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -135,6 +135,7 @@ extension ScheduleViewController {
         let button = UIButton(type: .custom)
         button.setTitle("Готово", for: .normal)
         button.setTitleColor(.ypWhite1, for: .normal)
+        button.titleLabel?.font = UIFont(name: FontsString.sfProMedium, size: 16)
         button.backgroundColor = .ypBlack1
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(didTapDoneButton), for: .touchUpInside)

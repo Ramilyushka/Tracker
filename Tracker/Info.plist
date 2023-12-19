@@ -6,7 +6,8 @@
          <array>
               <string>YS Display-Bold.ttf</string>
               <string>YS Display-Medium.ttf</string>
-         </array> 
+              <string>SF-Pro.ttf</string>
+         </array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

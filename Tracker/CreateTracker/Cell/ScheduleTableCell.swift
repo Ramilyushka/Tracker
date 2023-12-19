@@ -11,11 +11,11 @@ final class ScheduleTableCell: UITableViewCell {
     
     static let reuseIdentifier = "scheduleCell"
     
-    var selectedDay: Bool = false
+    private var selectedDay: Bool = false
     
     private lazy var weekDayLabel: UILabel = {
         let dayOfWeek = UILabel()
-        dayOfWeek.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        dayOfWeek.font = UIFont(name: FontsString.sfProRegular, size: 17)
         dayOfWeek.translatesAutoresizingMaskIntoConstraints = false
         return dayOfWeek
     }()
@@ -46,6 +46,10 @@ final class ScheduleTableCell: UITableViewCell {
     
     func update(title: String) {
         weekDayLabel.text = title
+    }
+    
+    func isSelectedDay() -> Bool {
+        return selectedDay
     }
     
     func setDay(index: Int) -> Schedule {
