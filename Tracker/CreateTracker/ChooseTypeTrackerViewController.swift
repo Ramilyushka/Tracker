@@ -49,8 +49,7 @@ extension ChooseTypeTrackerViewController {
         
         let label = UILabel()
         label.text = "Создание трекера"
-        //label.font = UIFont(name: FontsString.sfProMedium, size: 16)
-        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.font = UIFont(name: FontsString.sfProMedium, size: 16)
         label.textColor = .black
         
         label.translatesAutoresizingMaskIntoConstraints = false
