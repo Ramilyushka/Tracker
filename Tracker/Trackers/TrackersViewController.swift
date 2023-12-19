@@ -14,7 +14,7 @@ final class TrackersViewController: UIViewController {
     private var trackers: [Tracker] = []
     private var completedTrackers: [TrackerRecord] = []
     
-    private var selectedDate = Date()
+    private var currentDate = Date()
     private var selectedSearchText: String?
     
     private let params = GeometricParams(cellCount: 2,
@@ -58,7 +58,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func filteredTrackers(date: Date, text: String?) {
-        selectedDate = date
+        currentDate = date
         let calendar = Calendar.current
         let filterWeekDay = calendar.component(.weekday, from: date)
         let filterText = (text ?? "").lowercased()
@@ -170,7 +170,7 @@ extension TrackersViewController: TrackerActionDelegate {
             updatedCategories.append(newCategory)
         }
         categories = updatedCategories
-        filteredTrackers(date: selectedDate, text: selectedSearchText)
+        filteredTrackers(date: currentDate, text: selectedSearchText)
     }
 }
 
@@ -214,7 +214,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         let completedDays = completedTrackers.filter { $0.id == tracker.id }.count
         
         cell.setTrackerData(tracker: tracker,
-                            selectedDate: self.selectedDate,
+                            selectedDate: self.currentDate,
                             isCompleted: isCompleted,
                             completedDays: completedDays,
                             indexPath: indexPath)
