@@ -20,6 +20,7 @@
 		A8A516E62B31E7DE001C4C56 /* TrackerRecordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A516E52B31E7DE001C4C56 /* TrackerRecordModel.swift */; };
 		A8A516E82B31E7FC001C4C56 /* TrackerCategoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A516E72B31E7FC001C4C56 /* TrackerCategoryModel.swift */; };
 		A8A516EB2B31E86A001C4C56 /* GeometricParamsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A516EA2B31E86A001C4C56 /* GeometricParamsModel.swift */; };
+		A8A516EE2B321D96001C4C56 /* CoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A8A516EC2B321D96001C4C56 /* CoreData.xcdatamodeld */; };
 		A8AC66962AF2A8E900AA5C7E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8AC66952AF2A8E900AA5C7E /* AppDelegate.swift */; };
 		A8AC66982AF2A8E900AA5C7E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8AC66972AF2A8E900AA5C7E /* SceneDelegate.swift */; };
 		A8AC669F2AF2A8EA00AA5C7E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A8AC669E2AF2A8EA00AA5C7E /* Assets.xcassets */; };
@@ -49,6 +50,7 @@
 		A8A516E52B31E7DE001C4C56 /* TrackerRecordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordModel.swift; sourceTree = "<group>"; };
 		A8A516E72B31E7FC001C4C56 /* TrackerCategoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryModel.swift; sourceTree = "<group>"; };
 		A8A516EA2B31E86A001C4C56 /* GeometricParamsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParamsModel.swift; sourceTree = "<group>"; };
+		A8A516ED2B321D96001C4C56 /* CoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreData.xcdatamodel; sourceTree = "<group>"; };
 		A8AC66922AF2A8E900AA5C7E /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8AC66952AF2A8E900AA5C7E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A8AC66972AF2A8E900AA5C7E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 		A8AC66892AF2A8E900AA5C7E = {
 			isa = PBXGroup;
 			children = (
+				A8A516EC2B321D96001C4C56 /* CoreData.xcdatamodeld */,
 				A8AC66942AF2A8E900AA5C7E /* Tracker */,
 				A8AC66932AF2A8E900AA5C7E /* Products */,
 			);
@@ -278,6 +281,7 @@
 				A80D0CD22B2B7A7900C44AF0 /* EmojiCollectionViewCell.swift in Sources */,
 				A8A516EB2B31E86A001C4C56 /* GeometricParamsModel.swift in Sources */,
 				A8A516E42B31E795001C4C56 /* ScheduleModel.swift in Sources */,
+				A8A516EE2B321D96001C4C56 /* CoreData.xcdatamodeld in Sources */,
 				A8AC66AF2AF2B7CA00AA5C7E /* StatisticsViewController.swift in Sources */,
 				A8AC67292B00F3E300AA5C7E /* TrackerCategoryViewHeader.swift in Sources */,
 				A80D0CCB2B264E9300C44AF0 /* ChooseTypeTrackerViewController.swift in Sources */,
@@ -505,6 +509,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		A8A516EC2B321D96001C4C56 /* CoreData.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				A8A516ED2B321D96001C4C56 /* CoreData.xcdatamodel */,
+			);
+			currentVersion = A8A516ED2B321D96001C4C56 /* CoreData.xcdatamodel */;
+			path = CoreData.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = A8AC668A2AF2A8E900AA5C7E /* Project object */;
 }
