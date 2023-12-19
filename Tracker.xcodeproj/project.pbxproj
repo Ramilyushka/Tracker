@@ -20,7 +20,7 @@
 		A8A516E62B31E7DE001C4C56 /* TrackerRecordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A516E52B31E7DE001C4C56 /* TrackerRecordModel.swift */; };
 		A8A516E82B31E7FC001C4C56 /* TrackerCategoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A516E72B31E7FC001C4C56 /* TrackerCategoryModel.swift */; };
 		A8A516EB2B31E86A001C4C56 /* GeometricParamsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A516EA2B31E86A001C4C56 /* GeometricParamsModel.swift */; };
-		A8A516EE2B321D96001C4C56 /* CoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A8A516EC2B321D96001C4C56 /* CoreData.xcdatamodeld */; };
+		A8A516EE2B321D96001C4C56 /* Tracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A8A516EC2B321D96001C4C56 /* Tracker.xcdatamodeld */; };
 		A8AC66962AF2A8E900AA5C7E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8AC66952AF2A8E900AA5C7E /* AppDelegate.swift */; };
 		A8AC66982AF2A8E900AA5C7E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8AC66972AF2A8E900AA5C7E /* SceneDelegate.swift */; };
 		A8AC669F2AF2A8EA00AA5C7E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A8AC669E2AF2A8EA00AA5C7E /* Assets.xcassets */; };
@@ -103,10 +103,17 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		A8A516EF2B323590001C4C56 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				A8A516EC2B321D96001C4C56 /* Tracker.xcdatamodeld */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
 		A8AC66892AF2A8E900AA5C7E = {
 			isa = PBXGroup;
 			children = (
-				A8A516EC2B321D96001C4C56 /* CoreData.xcdatamodeld */,
 				A8AC66942AF2A8E900AA5C7E /* Tracker */,
 				A8AC66932AF2A8E900AA5C7E /* Products */,
 			);
@@ -125,13 +132,14 @@
 			children = (
 				A8AC67342B0A72C400AA5C7E /* Constants.swift */,
 				A8AC66A92AF2B6A100AA5C7E /* TabBarController.swift */,
+				A8AC66AB2AF2B6B200AA5C7E /* Application */,
+				A8A516EF2B323590001C4C56 /* CoreData */,
 				A8A516E22B31E614001C4C56 /* Models */,
 				A8AC66B02AF2B7D200AA5C7E /* Trackers */,
 				A8AC67362B123B1B00AA5C7E /* CreateTracker */,
 				A8AC66B12AF2B7E100AA5C7E /* Statistics */,
 				A8AC66B72AF2C0B100AA5C7E /* Main.storyboard */,
 				A8AC66A32AF2A8EA00AA5C7E /* Info.plist */,
-				A8AC66AB2AF2B6B200AA5C7E /* Application */,
 				A8AC672C2B0A6ED000AA5C7E /* Resources */,
 			);
 			path = Tracker;
@@ -281,7 +289,7 @@
 				A80D0CD22B2B7A7900C44AF0 /* EmojiCollectionViewCell.swift in Sources */,
 				A8A516EB2B31E86A001C4C56 /* GeometricParamsModel.swift in Sources */,
 				A8A516E42B31E795001C4C56 /* ScheduleModel.swift in Sources */,
-				A8A516EE2B321D96001C4C56 /* CoreData.xcdatamodeld in Sources */,
+				A8A516EE2B321D96001C4C56 /* Tracker.xcdatamodeld in Sources */,
 				A8AC66AF2AF2B7CA00AA5C7E /* StatisticsViewController.swift in Sources */,
 				A8AC67292B00F3E300AA5C7E /* TrackerCategoryViewHeader.swift in Sources */,
 				A80D0CCB2B264E9300C44AF0 /* ChooseTypeTrackerViewController.swift in Sources */,
@@ -511,13 +519,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		A8A516EC2B321D96001C4C56 /* CoreData.xcdatamodeld */ = {
+		A8A516EC2B321D96001C4C56 /* Tracker.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
 				A8A516ED2B321D96001C4C56 /* CoreData.xcdatamodel */,
 			);
 			currentVersion = A8A516ED2B321D96001C4C56 /* CoreData.xcdatamodel */;
-			path = CoreData.xcdatamodeld;
+			path = Tracker.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

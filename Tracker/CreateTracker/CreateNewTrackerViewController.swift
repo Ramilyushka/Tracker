@@ -104,7 +104,7 @@ final class CreateNewTrackerViewController: UIViewController {
     private func updateCreateButtonState() {
         let isTitleSelected = !(titleTrackerTextField.text?.isEmpty ?? true)
         let isCategorySelected = true
-        let isScheduleSelected = !(selectedSchedule?.isEmpty ?? (!isHabit))
+        let isScheduleSelected  = isHabit ? !(selectedSchedule?.isEmpty ?? true) : true
         let isEmojiSelected = (selectedEmoji != nil)
         let isColorSelected = (selectedColor != nil)
         
