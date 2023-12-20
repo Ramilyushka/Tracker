@@ -21,6 +21,10 @@
 		A8A516E82B31E7FC001C4C56 /* TrackerCategoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A516E72B31E7FC001C4C56 /* TrackerCategoryModel.swift */; };
 		A8A516EB2B31E86A001C4C56 /* GeometricParamsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A516EA2B31E86A001C4C56 /* GeometricParamsModel.swift */; };
 		A8A516EE2B321D96001C4C56 /* Tracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A8A516EC2B321D96001C4C56 /* Tracker.xcdatamodeld */; };
+		A8A517142B33013C001C4C56 /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A517132B33013C001C4C56 /* TrackerStore.swift */; };
+		A8A517162B3309E1001C4C56 /* TrackerCategoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A517152B3309E1001C4C56 /* TrackerCategoryStore.swift */; };
+		A8A517182B330A0F001C4C56 /* TrackerRecordStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A517172B330A0F001C4C56 /* TrackerRecordStore.swift */; };
+		A8A5171A2B330CA2001C4C56 /* UIColorMarshalling.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A517192B330CA2001C4C56 /* UIColorMarshalling.swift */; };
 		A8AC66962AF2A8E900AA5C7E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8AC66952AF2A8E900AA5C7E /* AppDelegate.swift */; };
 		A8AC66982AF2A8E900AA5C7E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8AC66972AF2A8E900AA5C7E /* SceneDelegate.swift */; };
 		A8AC669F2AF2A8EA00AA5C7E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A8AC669E2AF2A8EA00AA5C7E /* Assets.xcassets */; };
@@ -51,6 +55,10 @@
 		A8A516E72B31E7FC001C4C56 /* TrackerCategoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryModel.swift; sourceTree = "<group>"; };
 		A8A516EA2B31E86A001C4C56 /* GeometricParamsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParamsModel.swift; sourceTree = "<group>"; };
 		A8A516ED2B321D96001C4C56 /* CoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreData.xcdatamodel; sourceTree = "<group>"; };
+		A8A517132B33013C001C4C56 /* TrackerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStore.swift; sourceTree = "<group>"; };
+		A8A517152B3309E1001C4C56 /* TrackerCategoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStore.swift; sourceTree = "<group>"; };
+		A8A517172B330A0F001C4C56 /* TrackerRecordStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordStore.swift; sourceTree = "<group>"; };
+		A8A517192B330CA2001C4C56 /* UIColorMarshalling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorMarshalling.swift; sourceTree = "<group>"; };
 		A8AC66922AF2A8E900AA5C7E /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8AC66952AF2A8E900AA5C7E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A8AC66972AF2A8E900AA5C7E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -107,6 +115,10 @@
 			isa = PBXGroup;
 			children = (
 				A8A516EC2B321D96001C4C56 /* Tracker.xcdatamodeld */,
+				A8A517132B33013C001C4C56 /* TrackerStore.swift */,
+				A8A517172B330A0F001C4C56 /* TrackerRecordStore.swift */,
+				A8A517152B3309E1001C4C56 /* TrackerCategoryStore.swift */,
+				A8A517192B330CA2001C4C56 /* UIColorMarshalling.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -279,6 +291,7 @@
 				A80D0CD82B2E240F00C44AF0 /* ScheduleViewController.swift in Sources */,
 				A8A516E62B31E7DE001C4C56 /* TrackerRecordModel.swift in Sources */,
 				A8AC672E2B0A6F4700AA5C7E /* UIColor+Extensions.swift in Sources */,
+				A8A517182B330A0F001C4C56 /* TrackerRecordStore.swift in Sources */,
 				A8AC66AA2AF2B6A100AA5C7E /* TabBarController.swift in Sources */,
 				A8AC67252AF4C2A100AA5C7E /* TrackerModel.swift in Sources */,
 				A80D0CD42B2CC00500C44AF0 /* TrackerCollectionViewHeader.swift in Sources */,
@@ -290,6 +303,7 @@
 				A8A516EB2B31E86A001C4C56 /* GeometricParamsModel.swift in Sources */,
 				A8A516E42B31E795001C4C56 /* ScheduleModel.swift in Sources */,
 				A8A516EE2B321D96001C4C56 /* Tracker.xcdatamodeld in Sources */,
+				A8A517162B3309E1001C4C56 /* TrackerCategoryStore.swift in Sources */,
 				A8AC66AF2AF2B7CA00AA5C7E /* StatisticsViewController.swift in Sources */,
 				A8AC67292B00F3E300AA5C7E /* TrackerCategoryViewHeader.swift in Sources */,
 				A80D0CCB2B264E9300C44AF0 /* ChooseTypeTrackerViewController.swift in Sources */,
@@ -297,6 +311,8 @@
 				A8AC66962AF2A8E900AA5C7E /* AppDelegate.swift in Sources */,
 				A80D0CCD2B2665E600C44AF0 /* CreateNewTrackerViewController.swift in Sources */,
 				A8AC66982AF2A8E900AA5C7E /* SceneDelegate.swift in Sources */,
+				A8A5171A2B330CA2001C4C56 /* UIColorMarshalling.swift in Sources */,
+				A8A517142B33013C001C4C56 /* TrackerStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

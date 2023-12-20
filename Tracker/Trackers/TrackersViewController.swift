@@ -354,10 +354,10 @@ extension TrackersViewController {
     
     private func addDatePicker() {
         let picker = UIDatePicker()
-        picker.locale = Locale(identifier: "ru_RU")
-        picker.calendar = Calendar(identifier: .gregorian)
-        picker.datePickerMode = .date
         picker.preferredDatePickerStyle = .compact
+        picker.datePickerMode = .date
+        picker.locale = Locale(identifier: "ru_Rг")
+        picker.calendar = Calendar(identifier: .gregorian)
         
         picker.calendar.firstWeekday = 2
         picker.clipsToBounds = true
@@ -369,7 +369,7 @@ extension TrackersViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: picker)
         
         NSLayoutConstraint.activate([
-            picker.widthAnchor.constraint(equalToConstant: 120)
+            picker.widthAnchor.constraint(equalToConstant: 90)
         ])
         
         datePicker = picker
