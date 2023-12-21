@@ -32,21 +32,17 @@ final class TrackerTableCell: UITableViewCell {
         titleLabelCenterYAnchorConstraint.constant = subTitle != nil ? -11 : 0
     }
     
-    func updateSchedule(title: String, selectedSchedule: [Schedule]?) {
+    func updateSchedule(title: String, selectedSchedule: [Schedule]) {
         
         titleLabel.text = title
         
-        titleLabelCenterYAnchorConstraint.constant = selectedSchedule != nil ? -11 : 0
+        titleLabelCenterYAnchorConstraint.constant = selectedSchedule.isEmpty ? 0 : -11
         
-        guard let schedule = selectedSchedule else {
-            return
-        }
-        
-        if !schedule.isEmpty {
-            if schedule.count == 7 {
+        if !selectedSchedule.isEmpty {
+            if selectedSchedule.count == 7 {
                 subTitleLabel.text = "Каждый день"
             } else {
-                subTitleLabel.text = schedule.map { $0.daysShortNames }.joined(separator: ", ")
+                subTitleLabel.text = selectedSchedule.map { $0.daysShortNames }.joined(separator: ", ")
             }
         }
     }

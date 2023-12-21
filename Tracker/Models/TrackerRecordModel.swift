@@ -9,6 +9,6 @@ import Foundation
 
 //сущность для хранения записи о том, что некий трекер был выполнен на некоторую дату;
 struct TrackerRecord {
-    let id: UUID
+    let trackerID: UUID
     let date: Date
 }

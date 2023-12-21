@@ -8,9 +8,13 @@
 import UIKit
 import CoreData
 
-enum TrackerError: Error {
-    case invalidTrackerCoreData
-    case invalidScheduleValue(Int)
+enum TrackerStoreError: Error {
+    case decodingErrorID
+    case decodingErrorTitle
+    case decodingErrorEmoji
+    case decodingErrorColor
+    case decodingErrorSchedule
+    case decodingErrorInvalid
 }
 
 protocol TrackerStoreDelegate: AnyObject {
@@ -57,38 +61,44 @@ final class TrackerStore: NSObject {
         return trackers
     }
     
-    func addNewTracker(tracker: Tracker) throws {
+    func addNewTracker(_ tracker: Tracker) throws -> TrackerCoreData {
         let trackerCoreData = TrackerCoreData(context: context)
         trackerCoreData.id = tracker.id
         trackerCoreData.title = tracker.title
         trackerCoreData.color = uiColorMarshalling.hexString(from: tracker.color)
         trackerCoreData.emoji = tracker.emoji
         
-        if let schedule = tracker.schedule {
-            trackerCoreData.schedule = schedule.map { (item: Schedule) -> Int in
-                return item.rawValue
-            } as NSObject
-        }
+        trackerCoreData.schedule = tracker.schedule.map { (item: Schedule) -> Int in
+            return item.rawValue
+        } as NSObject
         
         try context.save()
+        return trackerCoreData
     }
     
-    func tracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
-        guard 
-            let id = trackerCoreData.id,
-            let title = trackerCoreData.title,
-            let emoji = trackerCoreData.emoji,
-            let colorHex = trackerCoreData.color,
-            let scheduleArray = trackerCoreData.schedule as? [Int]
-        else {
-            throw TrackerError.invalidTrackerCoreData
+    private func tracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
+        guard let id = trackerCoreData.id else {
+            throw TrackerStoreError.decodingErrorID
+        }
+        guard let title = trackerCoreData.title else {
+            throw TrackerStoreError.decodingErrorTitle
+        }
+        guard let emoji = trackerCoreData.emoji else {
+            throw TrackerStoreError.decodingErrorEmoji
+        }
+        guard  let colorHex = trackerCoreData.color else {
+            throw TrackerStoreError.decodingErrorColor
+        }
+        
+        guard let scheduleArray = trackerCoreData.schedule as? [Int] else {
+            throw TrackerStoreError.decodingErrorSchedule
         }
         
         let schedule = try scheduleArray.map {
-            guard let day = Schedule(rawValue: $0) else {
-                throw TrackerError.invalidScheduleValue($0)
+            guard let weekDay = Schedule(rawValue: $0) else {
+                throw TrackerStoreError.decodingErrorSchedule
             }
-            return day
+            return weekDay
         }
         
         return Tracker(id: id, title: title, color: uiColorMarshalling.color(from: colorHex), emoji: emoji, schedule: schedule)

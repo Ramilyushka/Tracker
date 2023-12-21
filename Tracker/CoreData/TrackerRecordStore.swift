@@ -8,8 +8,11 @@
 import UIKit
 import CoreData
 
-enum TrackerRecordError: Error {
-    case invalidTrackerRecordCoreData
+enum TrackerRecordStoreError: Error {
+    case decodingErrorTrackerID
+    case decodingErrorDate
+    case fetchError
+    case deleteError
 }
 
 protocol TrackerRecordStoreDelegate: AnyObject {
@@ -35,7 +38,7 @@ final class TrackerRecordStore: NSObject {
         
         let fetchRequest = TrackerRecordCoreData.fetchRequest()
         fetchRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \TrackerRecordCoreData.trackerId, ascending: true)
+            NSSortDescriptor(keyPath: \TrackerRecordCoreData.trackerID, ascending: true)
         ]
         
         let controller = NSFetchedResultsController(
@@ -57,23 +60,56 @@ final class TrackerRecordStore: NSObject {
         return trackerRecords
     }
     
-    func addNewTrackerRecord(trackerRecord: TrackerRecord) throws {
+    func trackerRecord(from trackerRecordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
+        guard  let date = trackerRecordCoreData.date else {
+            throw TrackerRecordStoreError.decodingErrorTrackerID
+        }
+        guard let trackerId = trackerRecordCoreData.trackerID else {
+            throw TrackerRecordStoreError.decodingErrorDate
+        }
+        
+        return TrackerRecord(trackerID: trackerId, date: date)
+    }
+    
+    func addTrackerRecord(_ trackerRecord: TrackerRecord) throws {
         let trackerRecordCoreData = TrackerRecordCoreData(context: context)
-        trackerRecordCoreData.trackerId = trackerRecord.id
+        trackerRecordCoreData.trackerID = trackerRecord.trackerID
         trackerRecordCoreData.date = trackerRecord.date
         
         try context.save()
     }
     
-    func trackerRecord(from trackerRecordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
+    func removeTrackerRecord(_ trackerRecord: TrackerRecord?) throws {
         guard 
-            let trackerId = trackerRecordCoreData.trackerId,
-            let date = trackerRecordCoreData.date
+            let trackerRecordCoreData = try self.fetchTrackerRecord(with: trackerRecord)
         else {
-            throw TrackerRecordError.invalidTrackerRecordCoreData
+            throw TrackerRecordStoreError.fetchError
+        }
+        context.delete(trackerRecordCoreData)
+        try context.save()
+    }
+    
+    private func fetchTrackerRecord(with trackerRecord: TrackerRecord?) throws -> TrackerRecordCoreData? {
+        
+        guard let trackerRecord = trackerRecord else {
+            return nil
         }
         
-        return TrackerRecord(id: trackerId, date: date)
+        let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        
+        let calendar = Calendar.current
+        let startDate = calendar.startOfDay(for: trackerRecord.date)
+        let endDate = calendar.date(byAdding: .day, value: 1, to: startDate)!
+        
+        fetchRequest.predicate = NSPredicate(
+            format: "trackerID == %@ AND date>=%@ AND date<%@",
+            trackerRecord.trackerID as CVarArg,
+            startDate as CVarArg,
+            endDate as CVarArg
+        )
+        
+        let result = try context.fetch(fetchRequest)
+        return result.first
     }
 }
 

@@ -116,8 +116,8 @@
 			children = (
 				A8A516EC2B321D96001C4C56 /* Tracker.xcdatamodeld */,
 				A8A517132B33013C001C4C56 /* TrackerStore.swift */,
-				A8A517172B330A0F001C4C56 /* TrackerRecordStore.swift */,
 				A8A517152B3309E1001C4C56 /* TrackerCategoryStore.swift */,
+				A8A517172B330A0F001C4C56 /* TrackerRecordStore.swift */,
 				A8A517192B330CA2001C4C56 /* UIColorMarshalling.swift */,
 			);
 			path = CoreData;

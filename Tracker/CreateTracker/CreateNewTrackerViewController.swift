@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TrackerActionDelegate: AnyObject {
-    func createTracker(categoryTitle: String, title: String, color: UIColor, emoji: String, schedule: [Schedule]?)
+    func createTracker(categoryTitle: String, title: String, color: UIColor, emoji: String, schedule: [Schedule])
 }
 
 final class CreateNewTrackerViewController: UIViewController {
@@ -19,7 +19,7 @@ final class CreateNewTrackerViewController: UIViewController {
     
     private var selectedTitle: String?
     private var selectedCategory: String?
-    private var selectedSchedule: [Schedule]?
+    private var selectedSchedule: [Schedule] = []
     private var selectedColor: UIColor?
     private var selectedEmoji: String?
     
@@ -104,7 +104,7 @@ final class CreateNewTrackerViewController: UIViewController {
     private func updateCreateButtonState() {
         let isTitleSelected = !(titleTrackerTextField.text?.isEmpty ?? true)
         let isCategorySelected = true
-        let isScheduleSelected  = isHabit ? !(selectedSchedule?.isEmpty ?? true) : true
+        let isScheduleSelected  = isHabit ? !(selectedSchedule.isEmpty) : true
         let isEmojiSelected = (selectedEmoji != nil)
         let isColorSelected = (selectedColor != nil)
         
@@ -167,8 +167,8 @@ extension CreateNewTrackerViewController: UITableViewDataSource, UITableViewDele
         }
         
         if indexPath.row == 0 {
-            cell.updateCategory(title: "Категория", subTitle: "Спорт") //default for debug
             selectedCategory = "Спорт"
+            cell.updateCategory(title: "Категория", subTitle: selectedCategory) //default for debug
         }
         if isHabit && indexPath.row == 1 {
             cell.updateSchedule(title: "Расписание", selectedSchedule: selectedSchedule)
