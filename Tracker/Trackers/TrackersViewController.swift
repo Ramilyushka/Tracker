@@ -51,8 +51,6 @@ final class TrackersViewController: UIViewController {
         trackerRecordStore.delegate = self
         completedTrackers = trackerRecordStore.trackerRecords
         
-        //mockData()
-        
         visibleCategories = categories
         filteredTrackers(date: Date(), text: "")
     }
@@ -94,64 +92,6 @@ final class TrackersViewController: UIViewController {
         collectionView.reloadData()
         showStubTrackers()
     }
-    
-    private func mockData(){
-        
-        let tracker1 = Tracker(
-            id: UUID.init(),
-            title: "Поливать растения",
-            color: .ypGreenColorSelection,
-            emoji: "🌸",
-            schedule: [Schedule.sunday, Schedule.monday, Schedule.wednesday, Schedule.friday])
-        
-        let tracker2 = Tracker(
-            id: UUID.init(),
-            title: "Кошка заслонила камеру на созвоне",
-            color: .ypOrangeColorSelection,
-            emoji: "😻",
-            schedule: [Schedule.sunday, Schedule.monday, Schedule.wednesday, Schedule.thursday, Schedule.friday])
-        
-        let tracker3 = Tracker(
-            id: UUID.init(),
-            title: "Бабушка прислала открытку в вотсапе",
-            color: .colorSelection1,
-            emoji: "🌸",
-            schedule: [Schedule.sunday, Schedule.friday, Schedule.saturday])
-        
-        let tracker4 = Tracker(
-            id: UUID.init(),
-            title: "Свидания в апреле",
-            color: .ypLilacColorSelection,
-            emoji: "❤️",
-            schedule: [Schedule.monday])
-        
-        let tracker5 = Tracker(
-            id: UUID.init(),
-            title: "Хорошее настроение",
-            color: .ypDarkPinkColorSelection,
-            emoji: "🙂",
-            schedule: [Schedule.monday, Schedule.wednesday, Schedule.thursday, Schedule.friday])
-        
-        let tracker6 = Tracker(
-            id: UUID.init(),
-            title: "Легкая тревожность",
-            color: .ypLightBlueColorSelection,
-            emoji: "😪",
-            schedule: [Schedule.wednesday, Schedule.thursday, Schedule.friday])
-        
-        trackers += [tracker1, tracker2, tracker3, tracker4, tracker5, tracker6]
-        
-        let category1 = TrackerCategory(title: "Домашний уют", trackers: [tracker1])
-        let category2 = TrackerCategory(title: "Радостные мелочи", trackers: [tracker2, tracker3, tracker4])
-        let category3 = TrackerCategory(title: "Самочувствие", trackers: [tracker5, tracker6])
-        
-        categories += [category1, category2, category3]
-        
-        completedTrackers += [
-            TrackerRecord(trackerID: tracker1.id, date: Date()),
-            TrackerRecord(trackerID: tracker3.id, date: Date())
-        ]
-    }
 }
 
 //MARK: Store Delegates
@@ -178,7 +118,7 @@ extension TrackersViewController: TrackerActionDelegate {
             emoji: emoji,
             schedule: schedule)
         
-        try! trackerCategoryStore.addNewTrackerToCategory(for: categoryTitle, tracker: newTracker)
+        try? trackerCategoryStore.addNewTrackerToCategory(for: categoryTitle, tracker: newTracker)
     }
 }
 
@@ -189,7 +129,7 @@ extension TrackersViewController: TrackerCellDelegate {
         let trackerRecord = TrackerRecord(trackerID: id, date: datePicker.date)
         completedTrackers.append(trackerRecord)
         
-        try! trackerRecordStore.addTrackerRecord(trackerRecord)
+        try? trackerRecordStore.addTrackerRecord(trackerRecord)
         
         collectionView.reloadItems(at: [indexPath])
     }
@@ -201,7 +141,7 @@ extension TrackersViewController: TrackerCellDelegate {
             return trackerRecord.trackerID == id && isSameDay
         }
         
-        try! self.trackerRecordStore.removeTrackerRecord(trackerRecord)
+        try? self.trackerRecordStore.removeTrackerRecord(trackerRecord)
         
         collectionView.reloadItems(at: [indexPath])
     }
@@ -278,23 +218,18 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
                       height: 148)
     }
     
-    //вертикальные отступы между ячейками внутри коллекции.
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
     
-    //горизонтальные отступы между ячейками.
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return params.cellSpacing
     }
     
-    //задать отступы от краёв коллекции
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         UIEdgeInsets(top: 10, left: params.leftInset, bottom: 10, right: params.rightInset)
     }
     
-    //---Для управления расположением и размерами элементов (включая размеры хедера)
-    //---получает на вход объект коллекции, layout и номер секции, а возвращает её (секции) размер
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -370,14 +305,12 @@ extension TrackersViewController {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
-        picker.locale = Locale(identifier: "ru_Rг")
-        picker.calendar = Calendar(identifier: .gregorian)
+        picker.locale = Locale(identifier: "ru_Ru")
         
         picker.calendar.firstWeekday = 2
         picker.clipsToBounds = true
         picker.layer.cornerRadius = 8
         picker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
-        
         picker.translatesAutoresizingMaskIntoConstraints = false
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: picker)

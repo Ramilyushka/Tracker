@@ -26,15 +26,15 @@ final class TrackerStore: NSObject {
     private let context: NSManagedObjectContext
     private let uiColorMarshalling = UIColorMarshalling()
     
-    private var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>!
+    private var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
     weak var delegate: TrackerStoreDelegate?
     
     convenience override init() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        try! self.init(context: context)
+        self.init(context: context)
     }
     
-    init(context: NSManagedObjectContext) throws {
+    init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
         
@@ -50,12 +50,13 @@ final class TrackerStore: NSObject {
         )
         controller.delegate = self
         self.fetchedResultsController = controller
-        try controller.performFetch()
+        try? controller.performFetch()
     }
     
     var trackers: [Tracker] {
         guard
-            let objects = self.fetchedResultsController.fetchedObjects,
+            let controller = fetchedResultsController,
+            let objects = controller.fetchedObjects,
             let trackers = try? objects.map({ try self.tracker(from: $0)})
         else { return [] }
         return trackers

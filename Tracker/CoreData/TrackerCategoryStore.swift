@@ -12,6 +12,7 @@ enum TrackerCategoryStoreError: Error {
     case decodingErrorTitle
     case decodingErrorTrackers
     case fetchError
+    case coreDataError
 }
 
 protocol TrackerCategoryStoreDelegate: AnyObject {
@@ -22,16 +23,16 @@ final class TrackerCategoryStore: NSObject {
     
     private let trackerStore = TrackerStore()
     private let context: NSManagedObjectContext
-    private var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>!
+    private var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData>?
     
     weak var delegate: TrackerCategoryStoreDelegate?
     
     convenience override init() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        try! self.init(context: context)
+        self.init(context: context)
     }
     
-    init(context: NSManagedObjectContext) throws {
+    init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
         
@@ -48,12 +49,13 @@ final class TrackerCategoryStore: NSObject {
         )
         controller.delegate = self
         self.fetchedResultsController = controller
-        try controller.performFetch()
+        try? controller.performFetch()
     }
     
     var trackerCategories: [TrackerCategory] {
         guard
-            let objects = self.fetchedResultsController.fetchedObjects,
+            let controller = fetchedResultsController,
+            let objects = controller.fetchedObjects,
             let trackerCategories = try? objects.map({ try self.trackerCategory(from: $0)})
         else { return [] }
         return trackerCategories
@@ -85,7 +87,9 @@ final class TrackerCategoryStore: NSObject {
         
         let trackerCoreData = try trackerStore.addNewTracker(tracker)
         
-        guard let trackerCategoryCoreData = try? fetchTrackerCategory(with: categoryTitle) else {
+        guard 
+            let trackerCategoryCoreData = try? fetchTrackerCategory(with: categoryTitle)
+        else {
             let newCategory = TrackerCategoryCoreData(context: context)
             newCategory.title = categoryTitle
             newCategory.trackers = NSSet(array: [trackerCoreData])
@@ -93,8 +97,13 @@ final class TrackerCategoryStore: NSObject {
             return
         }
         
-        guard let trackers = trackerCategoryCoreData.trackers else { return }
-        guard var updateTrackerCoreData = trackers.allObjects as? [TrackerCoreData] else { return }
+        guard 
+            let trackers = trackerCategoryCoreData.trackers,
+            var updateTrackerCoreData = trackers.allObjects as? [TrackerCoreData]
+        else {
+            throw TrackerCategoryStoreError.coreDataError
+        }
+        
         updateTrackerCoreData.append(trackerCoreData)
         trackerCategoryCoreData.trackers = NSSet(array: updateTrackerCoreData)
         

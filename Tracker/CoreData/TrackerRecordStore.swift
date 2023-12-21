@@ -23,16 +23,16 @@ final class TrackerRecordStore: NSObject {
     
     private let context: NSManagedObjectContext
     
-    private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>!
+    private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
     
     weak var delegate: TrackerRecordStoreDelegate?
     
     convenience override init() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        try! self.init(context: context)
+        self.init(context: context)
     }
     
-    init(context: NSManagedObjectContext) throws {
+    init(context: NSManagedObjectContext) {
         self.context = context
         super.init()
         
@@ -49,12 +49,13 @@ final class TrackerRecordStore: NSObject {
         )
         controller.delegate = self
         self.fetchedResultsController = controller
-        try controller.performFetch()
+        try? controller.performFetch()
     }
     
     var trackerRecords: [TrackerRecord] {
         guard
-            let objects = self.fetchedResultsController.fetchedObjects,
+            let controller = fetchedResultsController,
+            let objects = controller.fetchedObjects,
             let trackerRecords = try? objects.map({ try self.trackerRecord(from: $0)})
         else { return [] }
         return trackerRecords
