@@ -73,15 +73,15 @@ final class TrackerCategoryStore: NSObject {
             trackers: trackerStore.trackers.filter { trackers.map {$0.id}.contains($0.id) })
     }
     
-    func addEmptyTrackerCategory(_ trackerCategory: TrackerCategory) throws {
+    func addEmptyTrackerCategory(with categoryTitle: String) throws {
         let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
-        trackerCategoryCoreData.title = trackerCategory.title
+        trackerCategoryCoreData.title = categoryTitle
         trackerCategoryCoreData.trackers = NSSet(array: [])
         
         try context.save()
     }
     
-    func addNewTrackerToCategory(categoryTitle: String, tracker: Tracker) throws {
+    func addNewTrackerToCategory(for categoryTitle: String, tracker: Tracker) throws {
         
         let trackerCoreData = try trackerStore.addNewTracker(tracker)
         

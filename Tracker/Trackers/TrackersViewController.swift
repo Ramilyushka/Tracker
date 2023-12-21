@@ -178,7 +178,7 @@ extension TrackersViewController: TrackerActionDelegate {
             emoji: emoji,
             schedule: schedule)
         
-        try! trackerCategoryStore.addNewTrackerToCategory(categoryTitle: categoryTitle, tracker: newTracker)
+        try! trackerCategoryStore.addNewTrackerToCategory(for: categoryTitle, tracker: newTracker)
     }
 }
 
