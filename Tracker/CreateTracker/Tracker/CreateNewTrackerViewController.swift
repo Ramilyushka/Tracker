@@ -167,8 +167,7 @@ extension CreateNewTrackerViewController: UITableViewDataSource, UITableViewDele
         }
         
         if indexPath.row == 0 {
-            selectedCategory = "Спорт"
-            cell.updateCategory(title: "Категория", subTitle: selectedCategory) //default for debug
+            cell.updateCategory(title: "Категория", subTitle: selectedCategory)
         }
         if isHabit && indexPath.row == 1 {
             cell.updateSchedule(title: "Расписание", selectedSchedule: selectedSchedule)
@@ -196,14 +195,17 @@ extension CreateNewTrackerViewController: UITableViewDataSource, UITableViewDele
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            //let cell = trackerTableView.cellForRow(at: indexPath) as? TrackerTableCell
-            //selectedCategory = "Спорт" //default for debug
-            //updateCreateButtonState()
+            let categoriesVC = CategoriesViewController()
+            categoriesVC.viewModel.$selectedCategory.bind { [weak self] category in
+                self?.selectedCategory = category?.title
+                self?.trackerTableView.reloadData()
+            }
+            present(categoriesVC, animated: true, completion: nil)
         }
         if indexPath.row == 1 {
-            let scheduleViewController = ScheduleViewController()
-            scheduleViewController.delegate = self
-            present(scheduleViewController, animated: true, completion: nil)
+            let scheduleVC = ScheduleViewController()
+            scheduleVC.delegate = self
+            present(scheduleVC, animated: true, completion: nil)
         }
         trackerTableView.deselectRow(at: indexPath, animated: true)
     }
