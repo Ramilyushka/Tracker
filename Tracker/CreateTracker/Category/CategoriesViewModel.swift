@@ -10,7 +10,7 @@ import UIKit
 final class CategoriesViewModel {
     
     @Observable
-    private (set) var selectedCategory: TrackerCategory?
+    private (set) var selectedCategory: String?
     
     private(set) var categories: [TrackerCategory] = []
     
@@ -22,15 +22,19 @@ final class CategoriesViewModel {
     }
 
     func addCategory(_ title: String) {
-        try? categoryStore.addEmptyTrackerCategory(with: title)
+        try? categoryStore.addEmptyCategory(with: title)
     }
 
-    func deleteCategory() {
-        //try! emojiMixStore.deleteAll()
+    func updateCategory(oldTitle: String, newTitle: String) {
+        try? categoryStore.updateTitle(oldTitle: oldTitle, newTitle: newTitle)
+    }
+    
+    func deleteCategory(_ title: String) {
+        try? categoryStore.remove(with: title)
     }
     
     func selectCategory(index: Int) {
-        selectedCategory = categories[index]
+        selectedCategory = categories[index].title
     }
 }
 

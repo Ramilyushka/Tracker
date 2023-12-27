@@ -196,8 +196,8 @@ extension CreateNewTrackerViewController: UITableViewDataSource, UITableViewDele
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
             let categoriesVC = CategoriesViewController()
-            categoriesVC.viewModel.$selectedCategory.bind { [weak self] category in
-                self?.selectedCategory = category?.title
+            categoriesVC.viewModel.$selectedCategory.bind { [weak self] categoryTitle in
+                self?.selectedCategory = categoryTitle
                 self?.trackerTableView.reloadData()
             }
             present(categoriesVC, animated: true, completion: nil)

@@ -75,7 +75,7 @@ final class TrackerCategoryStore: NSObject {
             trackers: trackerStore.trackers.filter { trackers.map {$0.id}.contains($0.id) })
     }
     
-    func addEmptyTrackerCategory(with categoryTitle: String) throws {
+    func addEmptyCategory(with categoryTitle: String) throws {
         let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
         trackerCategoryCoreData.title = categoryTitle
         trackerCategoryCoreData.trackers = NSSet(array: [])
@@ -85,10 +85,10 @@ final class TrackerCategoryStore: NSObject {
     
     func addNewTrackerToCategory(for categoryTitle: String, tracker: Tracker) throws {
         
-        let trackerCoreData = try trackerStore.addNewTracker(tracker)
+        let trackerCoreData = try trackerStore.add(tracker)
         
         guard 
-            let trackerCategoryCoreData = try? fetchTrackerCategory(with: categoryTitle)
+            let trackerCategoryCoreData = try? fetch(with: categoryTitle)
         else {
             let newCategory = TrackerCategoryCoreData(context: context)
             newCategory.title = categoryTitle
@@ -101,7 +101,7 @@ final class TrackerCategoryStore: NSObject {
             let trackers = trackerCategoryCoreData.trackers,
             var updateTrackerCoreData = trackers.allObjects as? [TrackerCoreData]
         else {
-            throw TrackerCategoryStoreError.coreDataError
+            throw TrackerCategoryStoreError.decodingErrorTrackers
         }
         
         updateTrackerCoreData.append(trackerCoreData)
@@ -110,7 +110,44 @@ final class TrackerCategoryStore: NSObject {
         try context.save()
     }
     
-    private func fetchTrackerCategory(with titleCategory: String) throws -> TrackerCategoryCoreData? {
+    func updateTitle(oldTitle: String, newTitle: String) throws {
+        
+        guard
+            let trackerCategoryCoreData = try? fetch(with: oldTitle)
+        else {
+           throw TrackerCategoryStoreError.fetchError
+        }
+        
+        trackerCategoryCoreData.title = newTitle
+        
+        try context.save()
+    }
+    
+    func remove(with categoryTitle: String) throws {
+        guard
+            let trackerCategoryCoreData = try self.fetch(with: categoryTitle)
+        else {
+            throw TrackerCategoryStoreError.fetchError
+        }
+        
+        guard 
+            let trackers = trackerCategoryCoreData.trackers,
+            let deleteTrackersCoreData = trackers.allObjects as? [TrackerCoreData]
+        else {
+            throw TrackerCategoryStoreError.decodingErrorTrackers
+        }
+        
+        for tracker in deleteTrackersCoreData {
+            guard let _ = try? trackerStore.remove(id: tracker.id) else {
+                throw TrackerStoreError.removeError
+            }
+        }
+        
+        context.delete(trackerCategoryCoreData)
+        try context.save()
+    }
+    
+    private func fetch(with titleCategory: String) throws -> TrackerCategoryCoreData? {
         
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         

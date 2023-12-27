@@ -12,7 +12,6 @@ final class TrackersViewController: UIViewController {
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerCategoryStore = TrackerCategoryStore()
     
-    private var trackers: [Tracker] = []
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
@@ -129,7 +128,7 @@ extension TrackersViewController: TrackerCellDelegate {
         let trackerRecord = TrackerRecord(trackerID: id, date: datePicker.date)
         completedTrackers.append(trackerRecord)
         
-        try? trackerRecordStore.addTrackerRecord(trackerRecord)
+        try? trackerRecordStore.add(trackerRecord)
         
         collectionView.reloadItems(at: [indexPath])
     }
@@ -141,7 +140,7 @@ extension TrackersViewController: TrackerCellDelegate {
             return trackerRecord.trackerID == id && isSameDay
         }
         
-        try? self.trackerRecordStore.removeTrackerRecord(trackerRecord)
+        try? self.trackerRecordStore.remove(trackerRecord)
         
         collectionView.reloadItems(at: [indexPath])
     }
