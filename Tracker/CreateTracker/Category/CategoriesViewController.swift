@@ -34,11 +34,11 @@ final class CategoriesViewController: UIViewController {
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .ypBlack1
-        button.tintColor = .ypWhite1
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
         button.setTitle("Добавить категорию", for: .normal)
         button.titleLabel?.font = UIFont(name: FontsString.sfProMedium, size: 16)
+        button.setTitleColor(.ypWhite1, for: .normal)
         button.addTarget(self, action: #selector(didTapDoneButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

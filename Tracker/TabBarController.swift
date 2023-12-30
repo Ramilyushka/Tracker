@@ -11,7 +11,7 @@ final class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite1
         self.viewControllers = [createTrackersItem(),
                                 createStatisticsItem()]
     }

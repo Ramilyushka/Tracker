@@ -111,9 +111,11 @@ final class CreateNewTrackerViewController: UIViewController {
         if isTitleSelected && isCategorySelected  && isEmojiSelected && isColorSelected && isScheduleSelected {
             createButton.isEnabled = true
             createButton.backgroundColor = .ypBlack1
+            createButton.setTitleColor(.ypWhite1, for: .normal)
         } else {
             createButton.isEnabled = false
             createButton.backgroundColor = .ypGray1
+            createButton.setTitleColor(.white, for: .normal)
         }
     }
 }
@@ -386,8 +388,9 @@ extension CreateNewTrackerViewController {
     private func addTitleTrackerTextField() {
         
         let textField = UITextField()
-        textField.backgroundColor = .ypLightGray1
+        textField.backgroundColor = .ypBackground1
         textField.font = UIFont(name: FontsString.sfProRegular, size: 17)
+        
         textField.placeholder = "Введите название трекера"
         textField.textColor = .ypBlack1
         textField.clipsToBounds = true
@@ -543,7 +546,7 @@ extension CreateNewTrackerViewController {
         
         let button = UIButton(type: .custom)
         button.setTitle("Создать", for: .normal)
-        button.setTitleColor(.ypWhite1, for: .normal)
+        button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .ypGray1
         button.layer.cornerRadius = 16
         button.isEnabled = false

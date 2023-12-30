@@ -287,6 +287,7 @@ extension TrackersViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.allowsMultipleSelection = false //нужно выбирать лишь одну ячейку
+        collectionView.backgroundColor = .ypWhite1
     }
     
     private func addPlusButton() {
@@ -302,6 +303,8 @@ extension TrackersViewController {
     
     private func addDatePicker() {
         let picker = UIDatePicker()
+        //picker.backgroundColor = .ypBlack1
+        picker.tintColor = .ypBlack1
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
         picker.locale = Locale.current
@@ -326,7 +329,7 @@ extension TrackersViewController {
         let label = UILabel()
         label.text = NSLocalizedString("trackers", comment: "")
         label.font = UIFont(name: FontsString.sfProBold, size: 34)
-        label.textColor = .black
+        label.textColor = .ypBlack1
         
         label.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(label)
@@ -343,7 +346,6 @@ extension TrackersViewController {
         
         let search = UISearchTextField()
         search.placeholder = NSLocalizedString("search", comment: "")
-        search.backgroundColor = .ypLightGray1
         search.returnKeyType = .done
         
         search.translatesAutoresizingMaskIntoConstraints = false
@@ -383,7 +385,7 @@ extension TrackersViewController {
         let label = UILabel()
         label.text = NSLocalizedString("emptyTrackers", comment: "")
         label.font = UIFont(name: FontsString.sfProMedium, size: 12)
-        label.textColor = .black
+        label.textColor = .ypBlack1
         
         label.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(label)

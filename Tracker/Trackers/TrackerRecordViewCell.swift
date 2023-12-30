@@ -114,7 +114,7 @@ extension TrackerRecordViewCell {
     private func addEmojiLabel() {
         emojiLabel.clipsToBounds = true
         emojiLabel.layer.cornerRadius = 26/2
-        emojiLabel.backgroundColor = .ypLightGray
+        emojiLabel.backgroundColor = .ypLightGray1
         emojiLabel.textAlignment = .center
         view.addSubview(emojiLabel)
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -146,6 +146,7 @@ extension TrackerRecordViewCell {
     
     private func addDaysLabel() {
         
+        daysLabel.textColor = .white
         daysLabel.font = UIFont(name: FontsString.sfProMedium, size: 12)
         
         contentView.addSubview(daysLabel)

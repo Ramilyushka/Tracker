@@ -31,7 +31,7 @@ final class CategoryViewController: UIViewController {
     
     private lazy var titleTextField: UITextField = {
         let textField = UITextField()
-        textField.backgroundColor = .ypLightGray1
+        textField.backgroundColor = .ypBackground1
         textField.font = UIFont(name: FontsString.sfProRegular, size: 17)
         textField.placeholder = "Введите название категории"
         textField.textColor = .ypBlack1
@@ -52,11 +52,11 @@ final class CategoryViewController: UIViewController {
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .ypBlack1
-        button.tintColor = .ypWhite1
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
         button.setTitle("Готово", for: .normal)
         button.titleLabel?.font = UIFont(name: FontsString.sfProMedium, size: 16)
+        button.setTitleColor(.ypWhite1, for: .normal)
         button.addTarget(self, action: #selector(didTapDoneButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

@@ -61,7 +61,7 @@ final class ScheduleTableCell: UITableViewCell {
     }
     
     private func addViews() {
-        backgroundColor = .ypLightGray1
+        backgroundColor = .ypBackground1
         
         contentView.addSubview(weekDayLabel)
         contentView.addSubview(switchDay)

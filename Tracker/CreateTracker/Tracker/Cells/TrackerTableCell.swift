@@ -51,7 +51,7 @@ final class TrackerTableCell: UITableViewCell {
 extension TrackerTableCell {
     
     private func addViews() {
-        backgroundColor = .ypLightGray1
+        backgroundColor = .ypBackground1
         addTitleLabel()
         addSubTitleLabel()
         addChevronImage()

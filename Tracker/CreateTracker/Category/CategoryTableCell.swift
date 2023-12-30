@@ -53,7 +53,7 @@ final class CategoryTableCell: UITableViewCell {
     }
     
     private func addViews() {
-        backgroundColor = .ypLightGray1
+        backgroundColor = .ypBackground1
         clipsToBounds = true
         
         contentView.addSubview(categoryLabel)
