@@ -15,6 +15,9 @@ enum TrackerStoreError: Error {
     case decodingErrorColor
     case decodingErrorSchedule
     case decodingErrorInvalid
+    case decodingErrorRecords
+    case fetchError
+    case removeError
 }
 
 protocol TrackerStoreDelegate: AnyObject {
@@ -23,6 +26,7 @@ protocol TrackerStoreDelegate: AnyObject {
 
 final class TrackerStore: NSObject {
     
+    private let trackerRecordStore = TrackerRecordStore()
     private let context: NSManagedObjectContext
     private let uiColorMarshalling = UIColorMarshalling()
     
@@ -62,21 +66,6 @@ final class TrackerStore: NSObject {
         return trackers
     }
     
-    func addNewTracker(_ tracker: Tracker) throws -> TrackerCoreData {
-        let trackerCoreData = TrackerCoreData(context: context)
-        trackerCoreData.id = tracker.id
-        trackerCoreData.title = tracker.title
-        trackerCoreData.color = uiColorMarshalling.hexString(from: tracker.color)
-        trackerCoreData.emoji = tracker.emoji
-        
-        trackerCoreData.schedule = tracker.schedule.map { (item: Schedule) -> Int in
-            return item.rawValue
-        } as NSObject
-        
-        try context.save()
-        return trackerCoreData
-    }
-    
     private func tracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
         guard let id = trackerCoreData.id else {
             throw TrackerStoreError.decodingErrorID
@@ -103,6 +92,54 @@ final class TrackerStore: NSObject {
         }
         
         return Tracker(id: id, title: title, color: uiColorMarshalling.color(from: colorHex), emoji: emoji, schedule: schedule)
+    }
+    
+    func add(_ tracker: Tracker) throws -> TrackerCoreData {
+        let trackerCoreData = TrackerCoreData(context: context)
+        trackerCoreData.id = tracker.id
+        trackerCoreData.title = tracker.title
+        trackerCoreData.color = uiColorMarshalling.hexString(from: tracker.color)
+        trackerCoreData.emoji = tracker.emoji
+        
+        trackerCoreData.schedule = tracker.schedule.map { (item: Schedule) -> Int in
+            return item.rawValue
+        } as NSObject
+        
+        try context.save()
+        return trackerCoreData
+    }
+    
+    func remove(id: UUID?) throws {
+        guard
+            let trackerCoreData = try self.fetch(with: id)
+        else {
+            throw TrackerStoreError.fetchError
+        }
+        
+        guard
+            let _ = try? trackerRecordStore.removeByTrackerID(id) else {
+            throw TrackerRecordStoreError.removeError
+        }
+        
+        context.delete(trackerCoreData)
+        try context.save()
+    }
+    
+    private func fetch(with id: UUID?) throws -> TrackerCoreData? {
+        
+        guard let id = id else {
+            return nil
+        }
+        
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        
+        fetchRequest.predicate = NSPredicate(
+            format: "id == %@",
+            id as CVarArg
+        )
+        
+        let result = try context.fetch(fetchRequest)
+        return result.first
     }
 }
 

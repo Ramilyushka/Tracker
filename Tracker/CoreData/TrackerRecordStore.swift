@@ -12,7 +12,7 @@ enum TrackerRecordStoreError: Error {
     case decodingErrorTrackerID
     case decodingErrorDate
     case fetchError
-    case deleteError
+    case removeError
 }
 
 protocol TrackerRecordStoreDelegate: AnyObject {
@@ -72,7 +72,7 @@ final class TrackerRecordStore: NSObject {
         return TrackerRecord(trackerID: trackerId, date: date)
     }
     
-    func addTrackerRecord(_ trackerRecord: TrackerRecord) throws {
+    func add(_ trackerRecord: TrackerRecord) throws {
         let trackerRecordCoreData = TrackerRecordCoreData(context: context)
         trackerRecordCoreData.trackerID = trackerRecord.trackerID
         trackerRecordCoreData.date = trackerRecord.date
@@ -80,13 +80,27 @@ final class TrackerRecordStore: NSObject {
         try context.save()
     }
     
-    func removeTrackerRecord(_ trackerRecord: TrackerRecord?) throws {
+    func remove(_ trackerRecord: TrackerRecord?) throws {
         guard 
             let trackerRecordCoreData = try self.fetchTrackerRecord(with: trackerRecord)
         else {
             throw TrackerRecordStoreError.fetchError
         }
         context.delete(trackerRecordCoreData)
+        try context.save()
+    }
+    
+    func removeByTrackerID(_ id: UUID?) throws {
+        guard
+            let trackerRecordCoreData = try self.fetchByTrackerID(with: id)
+        else {
+            throw TrackerRecordStoreError.fetchError
+        }
+        
+        for record in trackerRecordCoreData {
+            context.delete(record)
+        }
+        
         try context.save()
     }
     
@@ -111,6 +125,23 @@ final class TrackerRecordStore: NSObject {
         
         let result = try context.fetch(fetchRequest)
         return result.first
+    }
+    
+    private func fetchByTrackerID(with id: UUID?) throws -> [TrackerRecordCoreData]? {
+        
+        guard let id = id else {
+            return nil
+        }
+        
+        let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        
+        fetchRequest.predicate = NSPredicate(
+            format: "trackerID == %@",
+            id as CVarArg
+        )
+        
+        let result = try context.fetch(fetchRequest)
+        return result
     }
 }
 
