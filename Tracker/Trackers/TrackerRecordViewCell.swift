@@ -65,7 +65,7 @@ final class TrackerRecordViewCell: UICollectionViewCell {
             addButton.alpha = isCompleted ? 0.3 : 1.0
         }
         
-        daysLabel.text = completedDays.description + " дней"
+        daysLabel.text = String.localizedStringWithFormat(NSLocalizedString("completedDays", comment: ""), completedDays)
     }
     
     @IBAction private func didTapPlusButton() {

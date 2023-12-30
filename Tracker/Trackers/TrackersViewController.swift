@@ -304,7 +304,7 @@ extension TrackersViewController {
         let picker = UIDatePicker()
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
-        picker.locale = Locale(identifier: "ru_Ru")
+        picker.locale = Locale.current
         
         picker.calendar.firstWeekday = 2
         picker.clipsToBounds = true
@@ -324,7 +324,7 @@ extension TrackersViewController {
     private func addHeadLabel() {
         
         let label = UILabel()
-        label.text = "Трекеры"
+        label.text = NSLocalizedString("trackers", comment: "")
         label.font = UIFont(name: FontsString.sfProBold, size: 34)
         label.textColor = .black
         
@@ -342,7 +342,7 @@ extension TrackersViewController {
     private func addSearchTextField() {
         
         let search = UISearchTextField()
-        search.placeholder = "Поиск"
+        search.placeholder = NSLocalizedString("search", comment: "")
         search.backgroundColor = .ypLightGray1
         search.returnKeyType = .done
         
@@ -381,7 +381,7 @@ extension TrackersViewController {
     private func addStubLabel() {
         
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = NSLocalizedString("emptyTrackers", comment: "")
         label.font = UIFont(name: FontsString.sfProMedium, size: 12)
         label.textColor = .black
         
@@ -405,7 +405,7 @@ extension TrackersViewController {
                 named: isZeroTrackers ? "stub_zero_trackers" : "stub_not_found_trackers") ?? UIImage()
             
             stubLabel.isHidden = false
-            stubLabel.text = isZeroTrackers ? "Что будем отслеживать?" : "Ничего не найдено"
+            stubLabel.text = isZeroTrackers ? NSLocalizedString("emptyTrackers", comment: "") : NSLocalizedString("emptySearch", comment: "")
         } else {
             collectionView.isHidden = false
             stubImageView.isHidden = true

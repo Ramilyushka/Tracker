@@ -1,0 +1,13 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Ramilia on 30/12/23.
+  
+*/
+
+trackers = "Трекеры";
+search = "Поиск";
+emptyTrackers = "Что будем отслеживать?";
+emptySearch = "Ничего не найдено";
+statistics = "Статистика";
