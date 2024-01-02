@@ -21,15 +21,15 @@ final class ChooseTypeTrackerViewController: UIViewController {
     }
     
     @IBAction private func didTapHabitButton() {
-        openCreateTrackerVC(isHabit: true)
+        showTrackerViewController(isHabit: true)
     }
     
     @IBAction private func didTapIrregularButton() {
-        openCreateTrackerVC(isHabit: false)
+        showTrackerViewController(isHabit: false)
     }
     
-    private func openCreateTrackerVC(isHabit: Bool) {
-        let addHabitTrackerVC = CreateNewTrackerViewController()
+    private func showTrackerViewController(isHabit: Bool) {
+        let addHabitTrackerVC = TrackerActionViewController()
         addHabitTrackerVC.isHabit = isHabit
         addHabitTrackerVC.delegate = self.delegate
         present(addHabitTrackerVC, animated: true)

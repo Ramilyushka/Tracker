@@ -104,6 +104,7 @@ final class TrackerCategoryStore: NSObject {
             throw TrackerCategoryStoreError.decodingErrorTrackers
         }
         
+        
         updateTrackerCoreData.append(trackerCoreData)
         trackerCategoryCoreData.trackers = NSSet(array: updateTrackerCoreData)
         

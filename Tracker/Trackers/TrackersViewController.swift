@@ -7,8 +7,9 @@
 
 import UIKit
 
-final class TrackersViewController: UIViewController {
+final class TrackersViewController: UIViewController, TrackerStoreDelegate {
     
+    private let trackerStore = TrackerStore()
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerCategoryStore = TrackerCategoryStore()
     
@@ -43,6 +44,8 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         addViews()
+        
+        trackerStore.delegate = self
         
         trackerCategoryStore.delegate = self
         categories = trackerCategoryStore.trackerCategories
@@ -104,20 +107,23 @@ extension TrackersViewController: TrackerCategoryStoreDelegate, TrackerRecordSto
     func storeTrackerRecord() {
         completedTrackers = trackerRecordStore.trackerRecords
     }
+    
+    func storeTracker() {
+        categories = trackerCategoryStore.trackerCategories
+        filteredTrackers(date: currentDate, text: selectedSearchText)
+    }
 }
 
 //MARK: TrackerActionDelegate
 extension TrackersViewController: TrackerActionDelegate {
     
-    func createTracker(categoryTitle: String, title: String, color: UIColor, emoji: String, schedule: [Schedule]) {
-        let newTracker = Tracker(
-            id: UUID.init(),
-            title: title,
-            color: color,
-            emoji: emoji,
-            schedule: schedule)
+    func createTracker(categoryTitle: String, newTracker: Tracker) {
         
         try? trackerCategoryStore.addNewTrackerToCategory(for: categoryTitle, tracker: newTracker)
+    }
+    
+    func updateTracker(tracker: Tracker) {
+        try? trackerStore.update(tracker)
     }
 }
 
@@ -175,7 +181,8 @@ extension TrackersViewController: UICollectionViewDataSource {
         cell.setTrackerData(tracker: tracker,
                             selectedDate: self.currentDate,
                             isCompleted: isCompleted,
-                            completedDays: completedDays,
+                            completedDays: completedDays, 
+                            isPinned: tracker.pinned,
                             indexPath: indexPath)
         
         return cell
@@ -233,6 +240,50 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: 20)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let indexPath = indexPaths[0]
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        let categoryTitle = visibleCategories[indexPath.section].title
+        
+        let pinnedButton = UIAction(title: tracker.pinned ? "Открепить" : "Закрепить") { [weak self] _ in
+            try? self?.trackerStore.pin(tracker, value: !tracker.pinned)
+        }
+        
+        let editButton = UIAction(title: "Редактировать") { [weak self] _ in
+            self?.showTrackerViewController(isNew: false, tracker: tracker, categoryTitle: categoryTitle)
+        }
+        
+        let deleteButton = UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+            
+            guard let self = self else { return }
+            
+            let alert = UIAlertController(title: nil, message: "Уверены что хотите удалить трекер?", preferredStyle: .actionSheet)
+            
+            let deleteButton = UIAlertAction(title: "Удалить", style: .destructive) {  [weak self] _ in
+                try? self?.trackerStore.remove(id: tracker.id)
+            }
+            alert.addAction(deleteButton)
+            
+            let cancelButton = UIAlertAction(title: "Отмeнить", style: .cancel)
+            alert.addAction(cancelButton)
+            
+            self.present(alert, animated: true)
+        }
+        
+        return UIContextMenuConfiguration(actionProvider: { actions in
+            return UIMenu(children: [pinnedButton, editButton, deleteButton])
+        })
+    }
+    
+    private func showTrackerViewController(isNew: Bool, tracker: Tracker, categoryTitle: String) {
+        let trackerVC = TrackerActionViewController()
+        trackerVC.delegate = self
+        trackerVC.isHabit = !tracker.schedule.isEmpty
+        trackerVC.setTracker(isNew: isNew, tracker: tracker, categoryTitle: categoryTitle)
+        present(trackerVC, animated: true)
     }
 }
 

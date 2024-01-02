@@ -18,12 +18,14 @@ final class TrackerRecordViewCell: UICollectionViewCell {
     static let reuseIdentifier = "cell"
     weak var delegate: TrackerCellDelegate?
     private var isCompleted = false
+    private var isPinned = false
     private var trackerID: UUID?
     private var indexPath: IndexPath?
     
     private var view = UIView()
     private let titleTrackerLabel = UILabel()
     private let emojiLabel = UILabel()
+    private let pinnedImageView = UIImageView()
     private var daysLabel = UILabel()
     private var addButton = UIButton()
     private let plusImage = UIImage(systemName: "plus") ?? UIImage()
@@ -43,6 +45,7 @@ final class TrackerRecordViewCell: UICollectionViewCell {
         selectedDate: Date,
         isCompleted: Bool,
         completedDays: Int,
+        isPinned: Bool,
         indexPath: IndexPath)
     {
         trackerID = tracker.id
@@ -66,6 +69,9 @@ final class TrackerRecordViewCell: UICollectionViewCell {
         }
         
         daysLabel.text = String.localizedStringWithFormat(NSLocalizedString("completedDays", comment: ""), completedDays)
+        
+        self.isPinned = isPinned
+        pinnedImageView.isHidden = !isPinned
     }
     
     @IBAction private func didTapPlusButton() {
@@ -90,6 +96,7 @@ extension TrackerRecordViewCell {
     private func addViewCell() {
         addView()
         addEmojiLabel()
+        addPinnedImageView()
         addTitleTrackerLabel()
         addDaysLabel()
         addAddButton()
@@ -156,6 +163,22 @@ extension TrackerRecordViewCell {
             daysLabel.topAnchor.constraint(equalTo: view.bottomAnchor, constant: 16),
             daysLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             daysLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
+        ])
+    }
+    
+    private func addPinnedImageView() {
+        pinnedImageView.isHidden = isPinned
+        pinnedImageView.contentMode = .center
+        pinnedImageView.image = UIImage(named: "pin") ?? UIImage()
+        
+        contentView.addSubview(pinnedImageView)
+        pinnedImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            pinnedImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 12),
+            pinnedImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -4),
+            pinnedImageView.heightAnchor.constraint(equalToConstant: 24),
+            pinnedImageView.widthAnchor.constraint(equalToConstant: 24)
         ])
     }
     
