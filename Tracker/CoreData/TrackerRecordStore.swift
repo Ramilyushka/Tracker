@@ -16,7 +16,7 @@ enum TrackerRecordStoreError: Error {
 }
 
 protocol TrackerRecordStoreDelegate: AnyObject {
-    func storeTrackerRecord() -> Void
+    func store() -> Void
 }
 
 final class TrackerRecordStore: NSObject {
@@ -148,6 +148,6 @@ final class TrackerRecordStore: NSObject {
 extension TrackerRecordStore: NSFetchedResultsControllerDelegate {
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        delegate?.storeTrackerRecord()
+        delegate?.store()
     }
 }

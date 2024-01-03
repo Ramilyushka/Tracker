@@ -18,6 +18,7 @@ final class TrackersViewController: UIViewController, TrackerStoreDelegate {
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
+    private var pinnedTrackers: [Tracker] = []
     
     private var currentDate = Date()
     private var selectedSearchText: String?
@@ -48,9 +49,18 @@ final class TrackersViewController: UIViewController, TrackerStoreDelegate {
         addViews()
         
         trackerStore.delegate = self
+       // trackers = trackerStore.trackers.filter{ !$0.pinned }
+        pinnedTrackers = trackerStore.trackers.filter{ $0.pinned }
         
         trackerCategoryStore.delegate = self
         categories = trackerCategoryStore.trackerCategories
+        print(categories)
+        
+        if !categories.isEmpty {
+            categories.insert(TrackerCategory(title: "Закрепленные", trackers: pinnedTrackers), at: 0)
+        }
+        
+   
         
         trackerRecordStore.delegate = self
         completedTrackers = trackerRecordStore.trackerRecords
@@ -112,17 +122,11 @@ final class TrackersViewController: UIViewController, TrackerStoreDelegate {
 //MARK: Store Delegates
 extension TrackersViewController: TrackerCategoryStoreDelegate, TrackerRecordStoreDelegate {
     
-    func storeTrackerCategory() {
-        categories = trackerCategoryStore.trackerCategories
-        filteredTrackers(date: currentDate, text: selectedSearchText)
-    }
-    
-    func storeTrackerRecord() {
+    func store() {
         completedTrackers = trackerRecordStore.trackerRecords
-    }
-    
-    func storeTracker() {
         categories = trackerCategoryStore.trackerCategories
+        pinnedTrackers = trackerStore.trackers.filter{ $0.pinned }
+        categories.insert(TrackerCategory(title: "Закрепленные", trackers: pinnedTrackers), at: 0)
         filteredTrackers(date: currentDate, text: selectedSearchText)
     }
 }
@@ -269,7 +273,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         
         let editButton = UIAction(title: "Редактировать") { [weak self] _ in
             guard let self = self else { return }
-            let categoryTitle = self.visibleCategories[indexPath.section].title
+            guard let categoryTitle = self.categories.last { $0.trackers.contains { $0.id == tracker.id } }?.title else { return }
             let completedDays = self.completedTrackers.filter { $0.trackerID == tracker.id }.count
             analyticsService.report("click", params: ["screen": "Main", "item": "edit"])
             self.showTrackerViewController(isNew: false, tracker: tracker, categoryTitle: categoryTitle, completedDays: completedDays)

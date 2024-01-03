@@ -16,7 +16,7 @@ enum TrackerCategoryStoreError: Error {
 }
 
 protocol TrackerCategoryStoreDelegate: AnyObject {
-    func storeTrackerCategory() -> Void
+    func store() -> Void
 }
 
 final class TrackerCategoryStore: NSObject {
@@ -150,6 +150,10 @@ final class TrackerCategoryStore: NSObject {
     
     func fetch(with titleCategory: String) throws -> TrackerCategoryCoreData? {
         
+        if titleCategory == "Закрепленные" {
+            return nil
+        }
+        
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         
         fetchRequest.predicate = NSPredicate(
@@ -165,6 +169,6 @@ final class TrackerCategoryStore: NSObject {
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        delegate?.storeTrackerCategory()
+        delegate?.store()
     }
 }
