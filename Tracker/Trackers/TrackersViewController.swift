@@ -9,6 +9,8 @@ import UIKit
 
 final class TrackersViewController: UIViewController, TrackerStoreDelegate {
     
+    private let analyticsService = AnalyticsService()
+    
     private let trackerStore = TrackerStore()
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerCategoryStore = TrackerCategoryStore()
@@ -57,7 +59,18 @@ final class TrackersViewController: UIViewController, TrackerStoreDelegate {
         filteredTrackers(date: Date(), text: "")
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        analyticsService.report("open", params: ["screen": "Main"])
+    }
+        
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        analyticsService.report("close", params: ["screen": "Main"])
+    }
+    
     @IBAction private func didTapPlusButton() {
+        analyticsService.report("click", params: ["screen": "Main", "item": "add_track"])
         let chooseTypeTrackerVC = ChooseTypeTrackerViewController()
         chooseTypeTrackerVC.delegate = self
         present(chooseTypeTrackerVC, animated: true)
@@ -134,6 +147,8 @@ extension TrackersViewController: TrackerCellDelegate {
         
         let trackerRecord = TrackerRecord(trackerID: id, date: datePicker.date)
         completedTrackers.append(trackerRecord)
+        
+        analyticsService.report("click", params: ["screen": "Main", "item": "track"])
         
         try? trackerRecordStore.add(trackerRecord)
         
@@ -256,12 +271,15 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             guard let self = self else { return }
             let categoryTitle = self.visibleCategories[indexPath.section].title
             let completedDays = self.completedTrackers.filter { $0.trackerID == tracker.id }.count
+            analyticsService.report("click", params: ["screen": "Main", "item": "edit"])
             self.showTrackerViewController(isNew: false, tracker: tracker, categoryTitle: categoryTitle, completedDays: completedDays)
         }
         
         let deleteButton = UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
             
             guard let self = self else { return }
+            
+            analyticsService.report("click", params: ["screen": "Main", "item": "delete"])
             
             let alert = UIAlertController(title: nil, message: "Уверены что хотите удалить трекер?", preferredStyle: .actionSheet)
             
