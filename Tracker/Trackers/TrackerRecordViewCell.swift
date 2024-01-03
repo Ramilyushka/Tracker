@@ -227,10 +227,10 @@ extension TrackerRecordViewCell {
 
 extension TrackerRecordViewCell {
     
-    func createContexMenuView (size: CGSize, tracker: Tracker) -> UIViewController {
+    func createContexMenuView (tracker: Tracker) -> UIViewController {
         let menuView = UIViewController()
         
-        menuView.preferredContentSize = size
+        menuView.preferredContentSize = CGSize(width: 167, height: 90)
         
         menuView.view.backgroundColor = tracker.color
         

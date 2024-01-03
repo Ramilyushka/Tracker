@@ -276,24 +276,14 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             self.present(alert, animated: true)
         }
         
-        let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: { [weak self] () -> UIViewController? in
-             guard let self = self else { return nil }
-             
-            let cellSize = CGSize(width: self.collectionView.bounds.width / 2 - 5, height: (self.collectionView.bounds.width / 2 - 5) * 0.55)
-            let previewVC = TrackerRecordViewCell().createContexMenuView(size: cellSize, tracker: tracker)
-    
-            // previewVC.configureView(sizeForPreview: cellSize, tracker: tracker)
-             
-             return previewVC
+        let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
+            let menuView = TrackerRecordViewCell().createContexMenuView(tracker: tracker)
+            return menuView
         }) { _ in
-            
             let actions = [pinnedButton, editButton, deleteButton]
             return UIMenu(title: "", children: actions)
         }
         
-//        return UIContextMenuConfiguration(actionProvider: { actions in
-//            return UIMenu(children: [pinnedButton, editButton, deleteButton])
-//        })
         return configuration
     }
     
