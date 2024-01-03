@@ -148,7 +148,7 @@ final class TrackerCategoryStore: NSObject {
         try context.save()
     }
     
-    private func fetch(with titleCategory: String) throws -> TrackerCategoryCoreData? {
+    func fetch(with titleCategory: String) throws -> TrackerCategoryCoreData? {
         
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         

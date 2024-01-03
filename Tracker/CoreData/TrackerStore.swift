@@ -28,6 +28,8 @@ protocol TrackerStoreDelegate: AnyObject {
 final class TrackerStore: NSObject {
     
     private let trackerRecordStore = TrackerRecordStore()
+    //private let trackerCategoryStore = TrackerCategoryStore()
+    
     private let context: NSManagedObjectContext
     private let uiColorMarshalling = UIColorMarshalling()
     
@@ -118,7 +120,7 @@ final class TrackerStore: NSObject {
         return trackerCoreData
     }
     
-    func update(_ tracker: Tracker) throws {
+    func update(categoryTitle: String, _ tracker: Tracker) throws {
         guard
             let trackerCoreData = try fetch(with: tracker.id)
         else {
@@ -131,6 +133,11 @@ final class TrackerStore: NSObject {
         trackerCoreData.schedule = tracker.schedule.map { (item: Schedule) -> Int in
             return item.rawValue
         } as NSObject
+        
+        let categoryFetch = TrackerCategoryStore()
+        let category = try? categoryFetch.fetch(with: categoryTitle)
+        
+        trackerCoreData.category = category
         
         try context.save()
     }

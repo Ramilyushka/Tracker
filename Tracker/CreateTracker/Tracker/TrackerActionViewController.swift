@@ -9,7 +9,7 @@ import UIKit
 
 protocol TrackerActionDelegate: AnyObject {
     func createTracker(categoryTitle: String, newTracker: Tracker)
-    func updateTracker(tracker: Tracker)
+    func updateTracker(categoryTitle: String, tracker: Tracker)
 }
 
 final class TrackerActionViewController: UIViewController {
@@ -46,7 +46,14 @@ final class TrackerActionViewController: UIViewController {
         label.text = isHabit ? "Новая привычка" : "Новое нерегулярное событие"
         label.font = UIFont(name: FontsString.sfProMedium, size: 16)
         label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private lazy var daysLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: FontsString.sfProBold, size: 32)
+        label.textAlignment = .center
+        label.isHidden = true
         return label
     }()
     
@@ -64,8 +71,6 @@ final class TrackerActionViewController: UIViewController {
         textField.leftViewMode = .always
         
         textField.clearButtonMode = .whileEditing
-        
-        textField.translatesAutoresizingMaskIntoConstraints = false
         
         return textField
         
@@ -176,24 +181,39 @@ final class TrackerActionViewController: UIViewController {
             let category = selectedCategory,
             let title = selectedTitle,
             let color = selectedColor,
-            let emoji = selectedEmoji,
-            let id = oldTracker?.id
+            let emoji = selectedEmoji
         else {
             return
         }
         
-        let tracker = Tracker(
-            id: id,
-            title: title,
-            color: color,
-            emoji: emoji,
-            pinned: false,
-            schedule: selectedSchedule)
-        
         if isNew {
-            delegate?.createTracker(categoryTitle: category, newTracker: tracker)
-        } else {
-            delegate?.updateTracker(tracker: tracker)
+            let newTracker = Tracker(
+                id: UUID(),
+                title: title,
+                color: color,
+                emoji: emoji,
+                pinned: false,
+                schedule: selectedSchedule)
+            
+            delegate?.createTracker(categoryTitle: category, newTracker: newTracker)
+        }
+        else {
+            guard
+                let id = oldTracker?.id,
+                let pinned = oldTracker?.pinned
+            else {
+                return
+            }
+            
+            let tracker = Tracker(
+                id: id,
+                title: title,
+                color: color,
+                emoji: emoji,
+                pinned: pinned,
+                schedule: selectedSchedule)
+            
+            delegate?.updateTracker(categoryTitle: category, tracker: tracker)
         }
         
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
@@ -217,12 +237,14 @@ final class TrackerActionViewController: UIViewController {
         }
     }
     
-    func setTracker(isNew: Bool, tracker: Tracker, categoryTitle: String) {
+    func setTracker(isNew: Bool, tracker: Tracker, categoryTitle: String, completedDays: Int) {
         self.isNew = isNew
         if !isNew {
             oldTracker = tracker
             headLabel.text = "Редактирование привычки"
             createButton.setTitle("Сохранить", for: .normal)
+            daysLabel.isHidden = false
+            daysLabel.text = String.localizedStringWithFormat(NSLocalizedString("completedDays", comment: ""), completedDays)
             titleTextField.text = tracker.title
             selectedTitle = tracker.title
             selectedCategory = categoryTitle
@@ -500,9 +522,6 @@ extension TrackerActionViewController {
         
         stackView.addArrangedSubview(cancelButton)
         stackView.addArrangedSubview(createButton)
-     
-        //addEmojiCollectionView()
-        //addColorCollectionView()
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -513,7 +532,7 @@ extension TrackerActionViewController {
             headLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 16),
             headLabel.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             
-            titleTextField.topAnchor.constraint(equalTo: headLabel.bottomAnchor, constant: 24),
+           // titleTextField.topAnchor.constraint(equalTo: headLabel.bottomAnchor, constant: 24),
             titleTextField.centerXAnchor.constraint(equalTo: headLabel.centerXAnchor),
             titleTextField.heightAnchor.constraint(equalToConstant: 75),
             titleTextField.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
@@ -545,6 +564,20 @@ extension TrackerActionViewController {
             
         ])
         
+        if isNew {
+            NSLayoutConstraint.activate([
+                titleTextField.topAnchor.constraint(equalTo: headLabel.bottomAnchor, constant: 24),
+            ])
+        } else {
+            daysLabel.translatesAutoresizingMaskIntoConstraints = false
+            scrollView.addSubview(daysLabel)
+            NSLayoutConstraint.activate([
+                daysLabel.topAnchor.constraint(equalTo: headLabel.bottomAnchor, constant: 24),
+                daysLabel.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+                titleTextField.topAnchor.constraint(equalTo: daysLabel.bottomAnchor, constant: 40),
+            ])
+        }
+        
         titleTextField.delegate = self
         trackerTableView.dataSource = self
         trackerTableView.delegate = self
@@ -554,32 +587,5 @@ extension TrackerActionViewController {
         colorCollectionView.dataSource = self
         colorCollectionView.delegate = self
         colorCollectionView.allowsMultipleSelection = false
-    }
-    
-    private func addEmojiCollectionView() {
-        emojiCollectionView.register(
-            TrackerCollectionViewHeader.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: TrackerCollectionViewHeader.reuseIdentifier)
-        
-        emojiCollectionView.register(
-            EmojiCollectionViewCell.self,
-            forCellWithReuseIdentifier: EmojiCollectionViewCell.reuseIdentifier)
-    }
-    
-    private func addColorCollectionView() {
-        colorCollectionView.register(
-            TrackerCollectionViewHeader.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: TrackerCollectionViewHeader.reuseIdentifier)
-        
-        colorCollectionView.register(
-            ColorCollectionViewCell.self,
-            forCellWithReuseIdentifier: ColorCollectionViewCell.reuseIdentifier)
-        
-        scrollView.addSubview(colorCollectionView)
-        colorCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        
-        
     }
 }

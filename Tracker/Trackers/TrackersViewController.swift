@@ -122,8 +122,9 @@ extension TrackersViewController: TrackerActionDelegate {
         try? trackerCategoryStore.addNewTrackerToCategory(for: categoryTitle, tracker: newTracker)
     }
     
-    func updateTracker(tracker: Tracker) {
-        try? trackerStore.update(tracker)
+    func updateTracker(categoryTitle: String, tracker: Tracker) {
+        
+        try? trackerStore.update(categoryTitle: categoryTitle, tracker)
     }
 }
 
@@ -246,14 +247,16 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         
         let indexPath = indexPaths[0]
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
-        let categoryTitle = visibleCategories[indexPath.section].title
         
         let pinnedButton = UIAction(title: tracker.pinned ? "Открепить" : "Закрепить") { [weak self] _ in
             try? self?.trackerStore.pin(tracker, value: !tracker.pinned)
         }
         
         let editButton = UIAction(title: "Редактировать") { [weak self] _ in
-            self?.showTrackerViewController(isNew: false, tracker: tracker, categoryTitle: categoryTitle)
+            guard let self = self else { return }
+            let categoryTitle = self.visibleCategories[indexPath.section].title
+            let completedDays = self.completedTrackers.filter { $0.trackerID == tracker.id }.count
+            self.showTrackerViewController(isNew: false, tracker: tracker, categoryTitle: categoryTitle, completedDays: completedDays)
         }
         
         let deleteButton = UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
@@ -273,16 +276,32 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             self.present(alert, animated: true)
         }
         
-        return UIContextMenuConfiguration(actionProvider: { actions in
-            return UIMenu(children: [pinnedButton, editButton, deleteButton])
-        })
+        let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: { [weak self] () -> UIViewController? in
+             guard let self = self else { return nil }
+             
+            let cellSize = CGSize(width: self.collectionView.bounds.width / 2 - 5, height: (self.collectionView.bounds.width / 2 - 5) * 0.55)
+            let previewVC = TrackerRecordViewCell().createContexMenuView(size: cellSize, tracker: tracker)
+    
+            // previewVC.configureView(sizeForPreview: cellSize, tracker: tracker)
+             
+             return previewVC
+        }) { _ in
+            
+            let actions = [pinnedButton, editButton, deleteButton]
+            return UIMenu(title: "", children: actions)
+        }
+        
+//        return UIContextMenuConfiguration(actionProvider: { actions in
+//            return UIMenu(children: [pinnedButton, editButton, deleteButton])
+//        })
+        return configuration
     }
     
-    private func showTrackerViewController(isNew: Bool, tracker: Tracker, categoryTitle: String) {
+    private func showTrackerViewController(isNew: Bool, tracker: Tracker, categoryTitle: String, completedDays: Int) {
         let trackerVC = TrackerActionViewController()
         trackerVC.delegate = self
         trackerVC.isHabit = !tracker.schedule.isEmpty
-        trackerVC.setTracker(isNew: isNew, tracker: tracker, categoryTitle: categoryTitle)
+        trackerVC.setTracker(isNew: isNew, tracker: tracker, categoryTitle: categoryTitle, completedDays: completedDays)
         present(trackerVC, animated: true)
     }
 }
