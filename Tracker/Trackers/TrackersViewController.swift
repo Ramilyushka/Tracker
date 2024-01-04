@@ -15,6 +15,7 @@ final class TrackersViewController: UIViewController, TrackerStoreDelegate {
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerCategoryStore = TrackerCategoryStore()
     
+    private var trackers: [Tracker] = []
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
@@ -51,6 +52,7 @@ final class TrackersViewController: UIViewController, TrackerStoreDelegate {
         addViews()
         
         trackerStore.delegate = self
+        trackers = trackerStore.trackers
         pinnedTrackers = trackerStore.trackers.filter{ $0.pinned }
         
         trackerCategoryStore.delegate = self
@@ -96,6 +98,7 @@ extension TrackersViewController: TrackerCategoryStoreDelegate, TrackerRecordSto
     func store() {
         completedTrackers = trackerRecordStore.trackerRecords
         categories = trackerCategoryStore.trackerCategories
+        trackers = trackerStore.trackers
         pinnedTrackers = trackerStore.trackers.filter{ $0.pinned }
         categories.insert(TrackerCategory(title: "Закрепленные", trackers: pinnedTrackers), at: 0)
         filterNotChange()
@@ -562,17 +565,17 @@ extension TrackersViewController {
     
     private func showStubTrackers() {
         if visibleCategories.isEmpty {
-            let isEmptyCategories = categories.isEmpty
+            let isEmptyTrackers = trackers.isEmpty
             
             collectionView.isHidden = true
             filterButton.isHidden = true
             
             stubImageView.isHidden = false
             stubImageView.image = UIImage(
-                named: isEmptyCategories ? "stub_zero_trackers" : "stub_not_found_trackers") ?? UIImage()
+                named: isEmptyTrackers ? "stub_zero_trackers" : "stub_not_found_trackers") ?? UIImage()
             
             stubLabel.isHidden = false
-            stubLabel.text = isEmptyCategories ? NSLocalizedString("emptyTrackers", comment: "") : NSLocalizedString("emptySearch", comment: "")
+            stubLabel.text = isEmptyTrackers ? NSLocalizedString("emptyTrackers", comment: "") : NSLocalizedString("emptySearch", comment: "")
         } else {
             collectionView.isHidden = false
             filterButton.isHidden = false

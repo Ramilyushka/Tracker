@@ -61,6 +61,12 @@ final class TrackerRecordStore: NSObject {
         return trackerRecords
     }
     
+    var countAllTrackerRecords:  Int? {
+        get {
+            self.trackerRecords.count
+        }
+    }
+    
     func trackerRecord(from trackerRecordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
         guard  let date = trackerRecordCoreData.date else {
             throw TrackerRecordStoreError.decodingErrorTrackerID

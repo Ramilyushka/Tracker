@@ -20,6 +20,8 @@
 		A87F37BC2B46E003002FF33E /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87F37BB2B46E003002FF33E /* FiltersViewController.swift */; };
 		A87F37BE2B46E65F002FF33E /* FilterTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87F37BD2B46E65F002FF33E /* FilterTableCell.swift */; };
 		A87F37C02B46F10E002FF33E /* FiltersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87F37BF2B46F10E002FF33E /* FiltersModel.swift */; };
+		A87F37C22B472758002FF33E /* StattisticTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87F37C12B472758002FF33E /* StattisticTableCell.swift */; };
+		A87F37C42B4738B1002FF33E /* StatisticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87F37C32B4738B1002FF33E /* StatisticsViewModel.swift */; };
 		A8A516E12B31D079001C4C56 /* SF-Pro.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A8A516E02B31D079001C4C56 /* SF-Pro.ttf */; };
 		A8A516E42B31E795001C4C56 /* ScheduleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A516E32B31E795001C4C56 /* ScheduleModel.swift */; };
 		A8A516E62B31E7DE001C4C56 /* TrackerRecordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A516E52B31E7DE001C4C56 /* TrackerRecordModel.swift */; };
@@ -83,6 +85,8 @@
 		A87F37BB2B46E003002FF33E /* FiltersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
 		A87F37BD2B46E65F002FF33E /* FilterTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTableCell.swift; sourceTree = "<group>"; };
 		A87F37BF2B46F10E002FF33E /* FiltersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersModel.swift; sourceTree = "<group>"; };
+		A87F37C12B472758002FF33E /* StattisticTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StattisticTableCell.swift; sourceTree = "<group>"; };
+		A87F37C32B4738B1002FF33E /* StatisticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewModel.swift; sourceTree = "<group>"; };
 		A8A516E02B31D079001C4C56 /* SF-Pro.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro.ttf"; sourceTree = "<group>"; };
 		A8A516E32B31E795001C4C56 /* ScheduleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleModel.swift; sourceTree = "<group>"; };
 		A8A516E52B31E7DE001C4C56 /* TrackerRecordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordModel.swift; sourceTree = "<group>"; };
@@ -326,6 +330,8 @@
 			isa = PBXGroup;
 			children = (
 				A8AC66AE2AF2B7CA00AA5C7E /* StatisticsViewController.swift */,
+				A87F37C12B472758002FF33E /* StattisticTableCell.swift */,
+				A87F37C32B4738B1002FF33E /* StatisticsViewModel.swift */,
 			);
 			path = Statistics;
 			sourceTree = "<group>";
@@ -527,6 +533,8 @@
 			files = (
 				A8A5171F2B361817001C4C56 /* PageOnboardingViewController.swift in Sources */,
 				A80D0CD62B2DD8FC00C44AF0 /* ColorCollectionViewCell.swift in Sources */,
+				A87F37C22B472758002FF33E /* StattisticTableCell.swift in Sources */,
+				A87F37C42B4738B1002FF33E /* StatisticsViewModel.swift in Sources */,
 				A8AC67352B0A72C400AA5C7E /* Constants.swift in Sources */,
 				A87F37BE2B46E65F002FF33E /* FilterTableCell.swift in Sources */,
 				A80D0CD82B2E240F00C44AF0 /* ScheduleViewController.swift in Sources */,
