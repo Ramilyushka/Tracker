@@ -11,3 +11,4 @@ search = "Поиск";
 emptyTrackers = "Что будем отслеживать?";
 emptySearch = "Ничего не найдено";
 statistics = "Статистика";
+filters = "Фильтры";

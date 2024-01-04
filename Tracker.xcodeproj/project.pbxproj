@@ -17,6 +17,8 @@
 		A80D0CD82B2E240F00C44AF0 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D0CD72B2E240F00C44AF0 /* ScheduleViewController.swift */; };
 		A80D0CDB2B2E475600C44AF0 /* ScheduleTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80D0CDA2B2E475600C44AF0 /* ScheduleTableCell.swift */; };
 		A87F37B92B45DF2C002FF33E /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87F37B82B45DF2C002FF33E /* AnalyticsService.swift */; };
+		A87F37BC2B46E003002FF33E /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87F37BB2B46E003002FF33E /* FiltersViewController.swift */; };
+		A87F37BE2B46E65F002FF33E /* FilterTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87F37BD2B46E65F002FF33E /* FilterTableCell.swift */; };
 		A8A516E12B31D079001C4C56 /* SF-Pro.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A8A516E02B31D079001C4C56 /* SF-Pro.ttf */; };
 		A8A516E42B31E795001C4C56 /* ScheduleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A516E32B31E795001C4C56 /* ScheduleModel.swift */; };
 		A8A516E62B31E7DE001C4C56 /* TrackerRecordModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A516E52B31E7DE001C4C56 /* TrackerRecordModel.swift */; };
@@ -77,6 +79,8 @@
 		A80D0CD72B2E240F00C44AF0 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		A80D0CDA2B2E475600C44AF0 /* ScheduleTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTableCell.swift; sourceTree = "<group>"; };
 		A87F37B82B45DF2C002FF33E /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
+		A87F37BB2B46E003002FF33E /* FiltersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
+		A87F37BD2B46E65F002FF33E /* FilterTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTableCell.swift; sourceTree = "<group>"; };
 		A8A516E02B31D079001C4C56 /* SF-Pro.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro.ttf"; sourceTree = "<group>"; };
 		A8A516E32B31E795001C4C56 /* ScheduleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleModel.swift; sourceTree = "<group>"; };
 		A8A516E52B31E7DE001C4C56 /* TrackerRecordModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordModel.swift; sourceTree = "<group>"; };
@@ -164,6 +168,15 @@
 				A80D0CD32B2CC00500C44AF0 /* TrackerCollectionViewHeader.swift */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		A87F37BA2B46DFC7002FF33E /* Filters */ = {
+			isa = PBXGroup;
+			children = (
+				A87F37BB2B46E003002FF33E /* FiltersViewController.swift */,
+				A87F37BD2B46E65F002FF33E /* FilterTableCell.swift */,
+			);
+			path = Filters;
 			sourceTree = "<group>";
 		};
 		A89CD1432B45DE78002A33F0 /* Analytics */ = {
@@ -276,6 +289,7 @@
 				A8A516E22B31E614001C4C56 /* Models */,
 				A8AC66B02AF2B7D200AA5C7E /* Trackers */,
 				A8AC67362B123B1B00AA5C7E /* CreateTracker */,
+				A87F37BA2B46DFC7002FF33E /* Filters */,
 				A8AC66B12AF2B7E100AA5C7E /* Statistics */,
 				A89CD1432B45DE78002A33F0 /* Analytics */,
 				A8AC66A32AF2A8EA00AA5C7E /* Info.plist */,
@@ -511,6 +525,7 @@
 				A8A5171F2B361817001C4C56 /* PageOnboardingViewController.swift in Sources */,
 				A80D0CD62B2DD8FC00C44AF0 /* ColorCollectionViewCell.swift in Sources */,
 				A8AC67352B0A72C400AA5C7E /* Constants.swift in Sources */,
+				A87F37BE2B46E65F002FF33E /* FilterTableCell.swift in Sources */,
 				A80D0CD82B2E240F00C44AF0 /* ScheduleViewController.swift in Sources */,
 				A8A516E62B31E7DE001C4C56 /* TrackerRecordModel.swift in Sources */,
 				A8AC672E2B0A6F4700AA5C7E /* UIColor+Extensions.swift in Sources */,
@@ -542,6 +557,7 @@
 				A80D0CCD2B2665E600C44AF0 /* TrackerActionViewController.swift in Sources */,
 				A8AC66982AF2A8E900AA5C7E /* SceneDelegate.swift in Sources */,
 				A8A5171A2B330CA2001C4C56 /* UIColorMarshalling.swift in Sources */,
+				A87F37BC2B46E003002FF33E /* FiltersViewController.swift in Sources */,
 				A8A517142B33013C001C4C56 /* TrackerStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -42,6 +42,7 @@ final class TrackersViewController: UIViewController, TrackerStoreDelegate {
     @IBOutlet private weak var searchTextField: UISearchTextField!
     @IBOutlet private weak var stubLabel: UILabel!
     @IBOutlet private weak var stubImageView: UIImageView!
+    @IBOutlet private weak var filterButton: UIButton!
     
     
     override func viewDidLoad() {
@@ -49,7 +50,6 @@ final class TrackersViewController: UIViewController, TrackerStoreDelegate {
         addViews()
         
         trackerStore.delegate = self
-       // trackers = trackerStore.trackers.filter{ !$0.pinned }
         pinnedTrackers = trackerStore.trackers.filter{ $0.pinned }
         
         trackerCategoryStore.delegate = self
@@ -89,6 +89,13 @@ final class TrackersViewController: UIViewController, TrackerStoreDelegate {
     @IBAction  private func datePickerValueChanged() {
         filteredTrackers(date: datePicker.date, text: searchTextField.text)
         dismiss(animated: true)
+    }
+    
+    @IBAction  private func didTapFilterButton() {
+        analyticsService.report("click", params: ["screen": "Main", "item": "filter"])
+        let filtersVC = FiltersViewController()
+       // filtersVC.delegate = self
+        present(filtersVC, animated: true)
     }
     
     private func filteredTrackers(date: Date, text: String?) {
@@ -262,9 +269,8 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: collectionView.frame.width, height: 20)
     }
     
-    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
-        let indexPath = indexPaths[0]
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         
         let pinnedButton = UIAction(title: tracker.pinned ? "Открепить" : "Закрепить") { [weak self] _ in
@@ -273,7 +279,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         
         let editButton = UIAction(title: "Редактировать") { [weak self] _ in
             guard let self = self else { return }
-            guard let categoryTitle = self.categories.last { $0.trackers.contains { $0.id == tracker.id } }?.title else { return }
+            guard let categoryTitle = self.categories.last(where: { $0.trackers.contains { $0.id == tracker.id } })?.title else { return }
             let completedDays = self.completedTrackers.filter { $0.trackerID == tracker.id }.count
             analyticsService.report("click", params: ["screen": "Main", "item": "edit"])
             self.showTrackerViewController(isNew: false, tracker: tracker, categoryTitle: categoryTitle, completedDays: completedDays)
@@ -343,6 +349,7 @@ extension TrackersViewController {
         addStubImageView()
         addStubLabel()
         addCollectionView()
+        addFilterButton()
     }
     
     private func addCollectionView(){
@@ -385,7 +392,6 @@ extension TrackersViewController {
     
     private func addDatePicker() {
         let picker = UIDatePicker()
-        //picker.backgroundColor = .ypBlack1
         picker.tintColor = .ypBlack1
         picker.preferredDatePickerStyle = .compact
         picker.datePickerMode = .date
@@ -442,6 +448,27 @@ extension TrackersViewController {
         
         searchTextField = search
     }
+    
+    private func addFilterButton() {
+        
+        let button = UIButton(type: .custom)
+        button.addTarget(self, action: #selector(didTapFilterButton), for: .touchUpInside)
+        button.setTitle(NSLocalizedString("filters", comment: ""), for: .normal)
+        button.backgroundColor = .ypBlue1
+        button.layer.cornerRadius = 16
+        button.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(button)
+        
+        NSLayoutConstraint.activate([
+            button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100),
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            button.heightAnchor.constraint(equalToConstant: 50),
+            button.widthAnchor.constraint(equalToConstant: 114)
+        ])
+        
+        filterButton = button
+    }
+    
     
     private func addStubImageView() {
         

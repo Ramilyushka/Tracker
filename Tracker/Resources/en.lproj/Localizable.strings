@@ -11,3 +11,4 @@ search = "Search";
 emptyTrackers = "What will we be tracking?";
 emptySearch = "Nothing found";
 statistics = "Statistics";
+filters = "Filters";
