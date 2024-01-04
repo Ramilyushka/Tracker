@@ -148,9 +148,9 @@ final class TrackerCategoryStore: NSObject {
         try context.save()
     }
     
-    func fetch(with titleCategory: String) throws -> TrackerCategoryCoreData? {
+    func fetch(with categoryTitle: String) throws -> TrackerCategoryCoreData? {
         
-        if titleCategory == "Закрепленные" {
+        if categoryTitle == "Закрепленные" {
             return nil
         }
         
@@ -158,7 +158,7 @@ final class TrackerCategoryStore: NSObject {
         
         fetchRequest.predicate = NSPredicate(
             format: "title == %@",
-            titleCategory as CVarArg
+            categoryTitle as CVarArg
         )
         
         let result = try context.fetch(fetchRequest)

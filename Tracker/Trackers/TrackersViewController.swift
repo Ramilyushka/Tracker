@@ -22,6 +22,7 @@ final class TrackersViewController: UIViewController, TrackerStoreDelegate {
     
     private var currentDate = Date()
     private var selectedSearchText: String?
+    private var currentFilter: Filters = .allTrackers
     
     private let params = GeometricParams(cellCount: 2,
                                          leftInset: 16,
@@ -54,19 +55,16 @@ final class TrackersViewController: UIViewController, TrackerStoreDelegate {
         
         trackerCategoryStore.delegate = self
         categories = trackerCategoryStore.trackerCategories
-        print(categories)
         
         if !categories.isEmpty {
             categories.insert(TrackerCategory(title: "Закрепленные", trackers: pinnedTrackers), at: 0)
         }
         
-   
-        
         trackerRecordStore.delegate = self
         completedTrackers = trackerRecordStore.trackerRecords
         
         visibleCategories = categories
-        filteredTrackers(date: Date(), text: "")
+        filteredTrackers(date: Date(), text: "", filterCompletedStatus: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -87,42 +85,8 @@ final class TrackersViewController: UIViewController, TrackerStoreDelegate {
     }
     
     @IBAction  private func datePickerValueChanged() {
-        filteredTrackers(date: datePicker.date, text: searchTextField.text)
+        filterNotChange()
         dismiss(animated: true)
-    }
-    
-    @IBAction  private func didTapFilterButton() {
-        analyticsService.report("click", params: ["screen": "Main", "item": "filter"])
-        let filtersVC = FiltersViewController()
-       // filtersVC.delegate = self
-        present(filtersVC, animated: true)
-    }
-    
-    private func filteredTrackers(date: Date, text: String?) {
-        currentDate = date
-        let calendar = Calendar.current
-        let filterWeekDay = calendar.component(.weekday, from: date)
-        let filterText = (text ?? "").lowercased()
-        
-        visibleCategories = categories.compactMap { category in
-            let trackers = category.trackers.filter { tracker in
-                let textCondition = filterText.isEmpty || tracker.title.lowercased().contains(filterText)
-                let dateCondition =  tracker.schedule.contains { weekday in
-                    weekday.intValue == filterWeekDay
-                } == true
-                let irregular = tracker.schedule.isEmpty //нерегулярное событие отображается всегда
-                return textCondition && (dateCondition || irregular)
-            }
-            
-            if trackers.isEmpty {
-                return nil
-            }
-            
-            return TrackerCategory(title: category.title, trackers: trackers)
-        }
-        
-        collectionView.reloadData()
-        showStubTrackers()
     }
 }
 
@@ -134,7 +98,96 @@ extension TrackersViewController: TrackerCategoryStoreDelegate, TrackerRecordSto
         categories = trackerCategoryStore.trackerCategories
         pinnedTrackers = trackerStore.trackers.filter{ $0.pinned }
         categories.insert(TrackerCategory(title: "Закрепленные", trackers: pinnedTrackers), at: 0)
-        filteredTrackers(date: currentDate, text: selectedSearchText)
+        filterNotChange()
+    }
+}
+
+//MARK: FiltersActionDelegate
+extension TrackersViewController: FiltersActionDelegate {
+    
+    @IBAction private func didTapFilterButton() {
+        analyticsService.report("click", params: ["screen": "Main", "item": "filter"])
+        let filtersVC = FiltersViewController()
+        filtersVC.delegate = self
+        filtersVC.setSelectFilter(filter: currentFilter)
+        present(filtersVC, animated: true)
+    }
+    
+    private func filterNotChange() {
+        switch currentFilter {
+        case .allTrackers:
+            filteredTrackers(date: datePicker.date, text: searchTextField.text, filterCompletedStatus: nil)
+        case .todayTrackers:
+            filteredTrackers(date: datePicker.date, text: searchTextField.text, filterCompletedStatus: nil)
+        case .completedTrackers:
+            filteredTrackers(date: datePicker.date, text: searchTextField.text, filterCompletedStatus: true)
+        case .unCompletedTrackers:
+            filteredTrackers(date: datePicker.date, text: searchTextField.text, filterCompletedStatus: false)
+        }
+    }
+    
+    func filterChange(selectFilter: Filters) {
+        currentFilter = selectFilter
+        
+        switch currentFilter {
+        case .allTrackers:
+            filteredTrackers(date: datePicker.date, text: searchTextField.text, filterCompletedStatus: nil)
+        case .todayTrackers:
+            switchDatePickerToToday()
+        case .completedTrackers:
+            filteredTrackers(date: datePicker.date, text: searchTextField.text, filterCompletedStatus: true)
+        case .unCompletedTrackers:
+            filteredTrackers(date: datePicker.date, text: searchTextField.text, filterCompletedStatus: false)
+        }
+    }
+    
+    private func switchDatePickerToToday() {
+        datePicker.date = Date()
+        filteredTrackers(date: datePicker.date, text: searchTextField.text, filterCompletedStatus: nil)
+    }
+    
+    private func filteredTrackers(date: Date, text: String?, filterCompletedStatus: Bool?) {
+        currentDate = date
+        let calendar = Calendar.current
+        let filterWeekDay = calendar.component(.weekday, from: date)
+        let filterText = (text ?? "").lowercased()
+        
+        visibleCategories = categories.compactMap { category in
+            let trackers = category.trackers.filter { tracker in
+                
+                //фильтр по поиску
+                let textCondition = filterText.isEmpty || tracker.title.lowercased().contains(filterText)
+                
+                //фильтр по расписанию
+                let dateCondition =  tracker.schedule.contains { weekday in
+                    weekday.intValue == filterWeekDay
+                } == true
+                let irregular = tracker.schedule.isEmpty //нерегулярное событие отображается всегда
+                let scheduleCondition = dateCondition || irregular
+                
+                //фильтр если выбран фильтр "Завершенные"/"Не завершенные"
+                guard let filterCompletedStatus = filterCompletedStatus else { return textCondition && scheduleCondition }
+                
+                let trackerCompleted = completedTrackers.first { trackerRecord in
+                    let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: datePicker.date)
+                    return tracker.id == trackerRecord.trackerID && isSameDay
+                  
+                } != nil
+             
+                let filterCondition = trackerCompleted == filterCompletedStatus
+                
+                return textCondition && scheduleCondition && filterCondition
+            }
+            
+            if trackers.isEmpty {
+                return nil
+            }
+            
+            return TrackerCategory(title: category.title, trackers: trackers)
+        }
+        
+        collectionView.reloadData()
+        showStubTrackers()
     }
 }
 
@@ -329,7 +382,7 @@ extension TrackersViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         selectedSearchText = searchTextField.text
-        filteredTrackers(date: datePicker.date, text: searchTextField.text)
+        filterNotChange()
     }
     
     func textFieldShouldReturn(_textField: UITextField) -> Bool {
@@ -348,8 +401,8 @@ extension TrackersViewController {
         searchTextField.delegate = self
         addStubImageView()
         addStubLabel()
-        addCollectionView()
         addFilterButton()
+        addCollectionView()
     }
     
     private func addCollectionView(){
@@ -368,7 +421,7 @@ extension TrackersViewController {
         
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 24),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: filterButton.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
@@ -509,16 +562,20 @@ extension TrackersViewController {
     
     private func showStubTrackers() {
         if visibleCategories.isEmpty {
-            let isZeroTrackers = categories.isEmpty
+            let isEmptyCategories = categories.isEmpty
+            
             collectionView.isHidden = true
+            filterButton.isHidden = true
+            
             stubImageView.isHidden = false
             stubImageView.image = UIImage(
-                named: isZeroTrackers ? "stub_zero_trackers" : "stub_not_found_trackers") ?? UIImage()
+                named: isEmptyCategories ? "stub_zero_trackers" : "stub_not_found_trackers") ?? UIImage()
             
             stubLabel.isHidden = false
-            stubLabel.text = isZeroTrackers ? NSLocalizedString("emptyTrackers", comment: "") : NSLocalizedString("emptySearch", comment: "")
+            stubLabel.text = isEmptyCategories ? NSLocalizedString("emptyTrackers", comment: "") : NSLocalizedString("emptySearch", comment: "")
         } else {
             collectionView.isHidden = false
+            filterButton.isHidden = false
             stubImageView.isHidden = true
             stubLabel.isHidden = true
         }

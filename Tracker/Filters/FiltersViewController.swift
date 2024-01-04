@@ -7,15 +7,15 @@
 
 import UIKit
 
+protocol FiltersActionDelegate: AnyObject {
+    func filterChange(selectFilter: Filters)
+}
+
 final class FiltersViewController: UIViewController {
     
-    private let filterNames: [String] = [
-        "Все трекеры",
-        "Трекеры на сегодня",
-        "Завершенные",
-        "Не завершенные"
-    ]
-    
+    weak var delegate: FiltersActionDelegate?
+    private var selectedFilters: Filters?
+     
     private lazy var headLabel: UILabel = {
         let label = UILabel()
         label.text = "Фильтры"
@@ -67,12 +67,20 @@ final class FiltersViewController: UIViewController {
             tableView.heightAnchor.constraint(equalToConstant: 300)
         ])
     }
+    
+    func setSelectFilter(filter: Filters?) {
+        guard let filter = filter else {
+            selectedFilters = Filters.allCases[0]
+            return
+        }
+        selectedFilters = filter
+    }
 }
 
 extension FiltersViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filterNames.count
+        return Filters.allCases.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -84,15 +92,17 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
         
-        let filter = filterNames[indexPath.row]
-        cell.updateTitle(title: filter)
-        
+        let filter = Filters.allCases[indexPath.row]
+        cell.updateTitle(title: filter.rawValue)
+        if selectedFilters != nil && selectedFilters == filter {
+            cell.select()
+        }
         return cell
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         
-        if indexPath.row != filterNames.count - 1 {
+        if indexPath.row != Filters.allCases.count - 1 {
             let separatorInset: CGFloat = 16
             let separatorWidth = tableView.bounds.width - separatorInset * 2
             let separatorHeight: CGFloat = 0.5
@@ -106,7 +116,11 @@ extension FiltersViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) as? FilterTableCell {
+           
             cell.select()
+            let filter = Filters.allCases[indexPath.row]
+            delegate?.filterChange(selectFilter: filter)
+            
             tableView.deselectRow(at: indexPath, animated: true)
             dismiss(animated: true, completion: nil)
         }
