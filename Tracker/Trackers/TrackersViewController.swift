@@ -168,8 +168,17 @@ extension TrackersViewController: FiltersActionDelegate {
                 let irregular = tracker.schedule.isEmpty //нерегулярное событие отображается всегда
                 let scheduleCondition = dateCondition || irregular
                 
+                //убрать запиненные из категорий
+                var pinCondition = true
+                
+                if category.title != "Закрепленные" {
+                    pinCondition = tracker.pinned == false
+                }
+                
                 //фильтр если выбран фильтр "Завершенные"/"Не завершенные"
-                guard let filterCompletedStatus = filterCompletedStatus else { return textCondition && scheduleCondition }
+                guard let filterCompletedStatus = filterCompletedStatus else {
+                    return textCondition && scheduleCondition && pinCondition
+                }
                 
                 let trackerCompleted = completedTrackers.first { trackerRecord in
                     let isSameDay = Calendar.current.isDate(trackerRecord.date, inSameDayAs: datePicker.date)
@@ -179,7 +188,7 @@ extension TrackersViewController: FiltersActionDelegate {
              
                 let filterCondition = trackerCompleted == filterCompletedStatus
                 
-                return textCondition && scheduleCondition && filterCondition
+                return textCondition && scheduleCondition && pinCondition && filterCondition
             }
             
             if trackers.isEmpty {
@@ -564,11 +573,19 @@ extension TrackersViewController {
     }
     
     private func showStubTrackers() {
+        
+        let filterAllTrackersCondition = currentFilter == .allTrackers || currentFilter == .todayTrackers
+        filterButton.setTitleColor(filterAllTrackersCondition ? .ypWhite1 : .ypRed1, for: .normal)
+        
         if visibleCategories.isEmpty {
+            
             let isEmptyTrackers = trackers.isEmpty
             
             collectionView.isHidden = true
-            filterButton.isHidden = true
+            filterButton.isHidden = isEmptyTrackers
+            if filterAllTrackersCondition {
+                filterButton.isHidden = true
+            }
             
             stubImageView.isHidden = false
             stubImageView.image = UIImage(
