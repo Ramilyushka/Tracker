@@ -1,0 +1,14 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Ramilia on 30/12/23.
+  
+*/
+
+trackers = "Trackers";
+search = "Search";
+emptyTrackers = "What will we be tracking?";
+emptySearch = "Nothing found";
+statistics = "Statistics";
+filters = "Filters";

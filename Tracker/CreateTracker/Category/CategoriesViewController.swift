@@ -34,11 +34,11 @@ final class CategoriesViewController: UIViewController {
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .ypBlack1
-        button.tintColor = .ypWhite1
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
         button.setTitle("Добавить категорию", for: .normal)
         button.titleLabel?.font = UIFont(name: FontsString.sfProMedium, size: 16)
+        button.setTitleColor(.ypWhite1, for: .normal)
         button.addTarget(self, action: #selector(didTapDoneButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -68,13 +68,12 @@ final class CategoriesViewController: UIViewController {
     }
     
     @IBAction private func didTapDoneButton() {
-        showCategoryViewController(isNewCategory: true, categoryTitle: "")
+        showCategoryViewController(isNew: true, categoryTitle: "")
     }
     
-    private func showCategoryViewController(isNewCategory: Bool, categoryTitle: String) {
-        let categoryVC = CategoryViewController()
-        categoryVC.isNewCategory = isNewCategory
-        categoryVC.setTitle(categoryTitle)
+    private func showCategoryViewController(isNew: Bool, categoryTitle: String) {
+        let categoryVC = CategoryActionViewController()
+        categoryVC.setTitle(isNew: isNew, categoryTitle)
         categoryVC.delegate = self
         present(categoryVC, animated: true)
     }
@@ -199,7 +198,7 @@ extension CategoriesViewController: UITableViewDataSource, UITableViewDelegate {
         let category = viewModel.categories[indexPath.row]
         
         let editButton = UIAction(title: "Редактировать") { [weak self] _ in
-            self?.showCategoryViewController(isNewCategory: false, categoryTitle: category.title)
+            self?.showCategoryViewController(isNew: false, categoryTitle: category.title)
         }
         
         let deleteButton = UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in

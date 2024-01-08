@@ -25,18 +25,19 @@ final class PageOnboardingViewController: UIViewController {
         label.font = UIFont(name: FontsString.sfProBold, size: 32)
         label.numberOfLines = 2
         label.textAlignment = .center
+        label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var continueButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.backgroundColor = .ypBlack1
-        button.tintColor = .ypWhite1
+        button.backgroundColor = .black
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
         button.setTitle("Вот это технологии!", for: .normal)
         button.titleLabel?.font = UIFont(name: FontsString.sfProMedium, size: 16)
+        button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(didTapContinueButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

@@ -39,7 +39,7 @@ final class CategoriesViewModel {
 }
 
 extension CategoriesViewModel: TrackerCategoryStoreDelegate {
-    func storeTrackerCategory() {
+    func store() {
         categories = categoryStore.trackerCategories
     }
 }

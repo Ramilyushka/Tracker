@@ -13,6 +13,7 @@ enum TrackerStoreError: Error {
     case decodingErrorTitle
     case decodingErrorEmoji
     case decodingErrorColor
+    case decodingErrorPinned
     case decodingErrorSchedule
     case decodingErrorInvalid
     case decodingErrorRecords
@@ -21,12 +22,14 @@ enum TrackerStoreError: Error {
 }
 
 protocol TrackerStoreDelegate: AnyObject {
-    func storeTracker() -> Void
+    func store() -> Void
 }
 
 final class TrackerStore: NSObject {
     
     private let trackerRecordStore = TrackerRecordStore()
+    //private let trackerCategoryStore = TrackerCategoryStore()
+    
     private let context: NSManagedObjectContext
     private let uiColorMarshalling = UIColorMarshalling()
     
@@ -67,6 +70,7 @@ final class TrackerStore: NSObject {
     }
     
     private func tracker(from trackerCoreData: TrackerCoreData) throws -> Tracker {
+        
         guard let id = trackerCoreData.id else {
             throw TrackerStoreError.decodingErrorID
         }
@@ -76,9 +80,11 @@ final class TrackerStore: NSObject {
         guard let emoji = trackerCoreData.emoji else {
             throw TrackerStoreError.decodingErrorEmoji
         }
-        guard  let colorHex = trackerCoreData.color else {
+        guard let colorHex = trackerCoreData.color else {
             throw TrackerStoreError.decodingErrorColor
         }
+        
+        let pinned = trackerCoreData.pinned
         
         guard let scheduleArray = trackerCoreData.schedule as? [Int] else {
             throw TrackerStoreError.decodingErrorSchedule
@@ -91,7 +97,11 @@ final class TrackerStore: NSObject {
             return weekDay
         }
         
-        return Tracker(id: id, title: title, color: uiColorMarshalling.color(from: colorHex), emoji: emoji, schedule: schedule)
+        return Tracker(id: id, title: title,
+                       color: uiColorMarshalling.color(from: colorHex),
+                       emoji: emoji,
+                       pinned: pinned,
+                       schedule: schedule)
     }
     
     func add(_ tracker: Tracker) throws -> TrackerCoreData {
@@ -100,6 +110,7 @@ final class TrackerStore: NSObject {
         trackerCoreData.title = tracker.title
         trackerCoreData.color = uiColorMarshalling.hexString(from: tracker.color)
         trackerCoreData.emoji = tracker.emoji
+        trackerCoreData.pinned = tracker.pinned
         
         trackerCoreData.schedule = tracker.schedule.map { (item: Schedule) -> Int in
             return item.rawValue
@@ -109,9 +120,31 @@ final class TrackerStore: NSObject {
         return trackerCoreData
     }
     
+    func update(categoryTitle: String, _ tracker: Tracker) throws {
+        guard
+            let trackerCoreData = try fetch(with: tracker.id)
+        else {
+            throw TrackerStoreError.fetchError
+        }
+        
+        trackerCoreData.title = tracker.title
+        trackerCoreData.color = uiColorMarshalling.hexString(from: tracker.color)
+        trackerCoreData.emoji = tracker.emoji
+        trackerCoreData.schedule = tracker.schedule.map { (item: Schedule) -> Int in
+            return item.rawValue
+        } as NSObject
+        
+        let categoryFetch = TrackerCategoryStore()
+        let category = try? categoryFetch.fetch(with: categoryTitle)
+        
+        trackerCoreData.category = category
+        
+        try context.save()
+    }
+    
     func remove(id: UUID?) throws {
         guard
-            let trackerCoreData = try self.fetch(with: id)
+            let trackerCoreData = try fetch(with: id)
         else {
             throw TrackerStoreError.fetchError
         }
@@ -122,6 +155,16 @@ final class TrackerStore: NSObject {
         }
         
         context.delete(trackerCoreData)
+        try context.save()
+    }
+    
+    func pin(_ tracker: Tracker?, value: Bool) throws {
+        guard 
+            let trackerCoreData = try fetch(with: tracker?.id)
+        else {
+            throw TrackerStoreError.fetchError
+        }
+        trackerCoreData.pinned = value
         try context.save()
     }
     
@@ -146,6 +189,6 @@ final class TrackerStore: NSObject {
 extension TrackerStore: NSFetchedResultsControllerDelegate {
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        delegate?.storeTracker()
+        delegate?.store()
     }
 }

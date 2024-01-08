@@ -12,17 +12,17 @@ protocol CategoryActionDelegate: AnyObject {
     func updateCategory(oldTitle: String, newTitle: String)
 }
 
-final class CategoryViewController: UIViewController {
+final class CategoryActionViewController: UIViewController {
     
-    var isNewCategory = true
     weak var delegate: CategoryActionDelegate?
     
+    private var isNewCategory = true
     private var selectedTitle: String?
     private var oldTitle: String = ""
     
     private lazy var headLabel: UILabel = {
         let label = UILabel()
-        label.text =  isNewCategory ? "Новая категория" : "Редактирование категории"
+        label.text = "Новая категория"
         label.font = UIFont(name: FontsString.sfProMedium, size: 16)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -31,7 +31,7 @@ final class CategoryViewController: UIViewController {
     
     private lazy var titleTextField: UITextField = {
         let textField = UITextField()
-        textField.backgroundColor = .ypLightGray1
+        textField.backgroundColor = .ypBackground1
         textField.font = UIFont(name: FontsString.sfProRegular, size: 17)
         textField.placeholder = "Введите название категории"
         textField.textColor = .ypBlack1
@@ -52,11 +52,11 @@ final class CategoryViewController: UIViewController {
     private lazy var doneButton: UIButton = {
         let button = UIButton(type: .custom)
         button.backgroundColor = .ypBlack1
-        button.tintColor = .ypWhite1
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
         button.setTitle("Готово", for: .normal)
         button.titleLabel?.font = UIFont(name: FontsString.sfProMedium, size: 16)
+        button.setTitleColor(.ypWhite1, for: .normal)
         button.addTarget(self, action: #selector(didTapDoneButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -68,8 +68,10 @@ final class CategoryViewController: UIViewController {
         updateDoneButtonState()
     }
     
-    func setTitle(_ title: String) {
-        if !isNewCategory {
+    func setTitle(isNew: Bool, _ title: String) {
+        isNewCategory = isNew
+        if !isNew {
+            headLabel.text = "Редактирование категории"
             titleTextField.text = title
             oldTitle = title
         }
@@ -115,7 +117,7 @@ final class CategoryViewController: UIViewController {
 }
 
 //MARK: UITextFieldDelegate
-extension CategoryViewController: UITextFieldDelegate {
+extension CategoryActionViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
         selectedTitle = titleTextField.text
         updateDoneButtonState()
