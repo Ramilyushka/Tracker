@@ -1,19 +1,19 @@
 //
-//  CategoryTableCell.swift
+//  FilterTableCell.swift
 //  Tracker
 //
-//  Created by Ramilia on 23/12/23.
+//  Created by Ramilia on 04/01/24.
 //
 
 import UIKit
 
-final class CategoryTableCell: UITableViewCell {
+final class FilterTableCell: UITableViewCell {
     
-    static let reuseIdentifier = "categoryCell"
+    static let reuseIdentifier = "filterCell"
     
-    private var selectedCategory: Bool = false
+    private var selectedFilter: Bool = false
     
-    private lazy var categoryLabel: UILabel = {
+    private lazy var filterLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: FontsString.sfProRegular, size: 17)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +41,7 @@ final class CategoryTableCell: UITableViewCell {
     }
     
     func updateTitle(title: String) {
-        categoryLabel.text = title
+        filterLabel.text = title
     }
     
     func select() {
@@ -54,14 +54,13 @@ final class CategoryTableCell: UITableViewCell {
     
     private func addViews() {
         backgroundColor = .ypBackground1
-        clipsToBounds = true
         
-        contentView.addSubview(categoryLabel)
+        contentView.addSubview(filterLabel)
         contentView.addSubview(selectedImageView)
         
         NSLayoutConstraint.activate([
-            categoryLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            categoryLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            filterLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            filterLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             selectedImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             selectedImageView.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])

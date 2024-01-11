@@ -21,15 +21,15 @@ final class ChooseTypeTrackerViewController: UIViewController {
     }
     
     @IBAction private func didTapHabitButton() {
-        openCreateTrackerVC(isHabit: true)
+        showTrackerViewController(isHabit: true)
     }
     
     @IBAction private func didTapIrregularButton() {
-        openCreateTrackerVC(isHabit: false)
+        showTrackerViewController(isHabit: false)
     }
     
-    private func openCreateTrackerVC(isHabit: Bool) {
-        let addHabitTrackerVC = CreateNewTrackerViewController()
+    private func showTrackerViewController(isHabit: Bool) {
+        let addHabitTrackerVC = TrackerActionViewController()
         addHabitTrackerVC.isHabit = isHabit
         addHabitTrackerVC.delegate = self.delegate
         present(addHabitTrackerVC, animated: true)
@@ -50,8 +50,7 @@ extension ChooseTypeTrackerViewController {
         let label = UILabel()
         label.text = "Создание трекера"
         label.font = UIFont(name: FontsString.sfProMedium, size: 16)
-        label.textColor = .black
-        
+        label.textColor = .ypBlack1
         label.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(label)
         
@@ -67,11 +66,11 @@ extension ChooseTypeTrackerViewController {
         
         let button = UIButton(type: .custom)
         button.backgroundColor = .ypBlack1
-        button.tintColor = .ypWhite1
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
         button.setTitle("Привычка", for: .normal)
         button.titleLabel?.font = UIFont(name: FontsString.sfProMedium, size: 16)
+        button.setTitleColor(.ypWhite1, for: .normal)
         
         button.addTarget(self, action: #selector(didTapHabitButton), for: .touchUpInside)
         
@@ -91,11 +90,11 @@ extension ChooseTypeTrackerViewController {
         
         let button = UIButton(type: .custom)
         button.backgroundColor = .ypBlack1
-        button.tintColor = .ypWhite1
         button.clipsToBounds = true
         button.layer.cornerRadius = 16
         button.setTitle("Нерегулярные событие", for: .normal)
         button.titleLabel?.font = UIFont(name: FontsString.sfProMedium, size: 16)
+        button.setTitleColor(.ypWhite1, for: .normal)
         
         button.addTarget(self, action: #selector(didTapIrregularButton), for: .touchUpInside)
         

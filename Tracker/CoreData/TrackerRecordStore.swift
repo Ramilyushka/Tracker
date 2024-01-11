@@ -16,7 +16,7 @@ enum TrackerRecordStoreError: Error {
 }
 
 protocol TrackerRecordStoreDelegate: AnyObject {
-    func storeTrackerRecord() -> Void
+    func store() -> Void
 }
 
 final class TrackerRecordStore: NSObject {
@@ -59,6 +59,12 @@ final class TrackerRecordStore: NSObject {
             let trackerRecords = try? objects.map({ try self.trackerRecord(from: $0)})
         else { return [] }
         return trackerRecords
+    }
+    
+    var countAllTrackerRecords:  Int? {
+        get {
+            self.trackerRecords.count
+        }
     }
     
     func trackerRecord(from trackerRecordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
@@ -148,6 +154,6 @@ final class TrackerRecordStore: NSObject {
 extension TrackerRecordStore: NSFetchedResultsControllerDelegate {
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        delegate?.storeTrackerRecord()
+        delegate?.store()
     }
 }
